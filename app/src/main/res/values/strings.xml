@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Meal Pal</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="disc_frag">Discover Fragment</string>
+    <string name="title_activity_recipe">Recipe</string>
+    <string name="modify_search">Modify Search</string>
+    <string name="recipe_image">Recipe Image</string>
+    <string name="calories_icon">Calories Icon</string>
+    <string name="button_view_recipe">View Recipe</string>
+    <string name="calories_indicator">%1$s Calories/Serving</string>
+    <string name="min_calories_label">Min Cal. %1$s</string>
+    <string name="max_calories_label">Max Cal. %1$s</string>
+    <string name="info_tag">"Info: "</string>
+    <string name="yield_tag">"Recipe Yield: "</string>
+    <string name="view_recipe_button">View Recipe</string>
+    <string name="recipe_image_helper">Image of recipe</string>
+    <string name="search_filters">Search Filters</string>
+    <string name="search_keywords">Search Keywords</string>
+    <string name="search_keyword">Search Keyword</string>
+    <string name="button_apply">Apply</string>
+    <string name="diet_health_labels">Diet/Health Labels</string>
+    <string name="diet_label">Diet Label</string>
+    <string name="health_label">Health Label</string>
+    <string name="calories_label">Calories</string>
+</resources>
