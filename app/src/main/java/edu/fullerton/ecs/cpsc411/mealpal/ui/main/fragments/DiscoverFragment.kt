@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -20,6 +21,7 @@ import edu.fullerton.ecs.cpsc411.mealpal.*
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentDiscoverBinding
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.DiscoverAdapter
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.RecipeListModelLoadStateAdapter
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverUiState
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModelFactory
@@ -57,7 +59,6 @@ class DiscoverFragment : Fragment() {
             pagingData = discoverViewModel.pagingDataFlow,
             uiActions = discoverViewModel.accept
         )
-
     }
 
     private fun FragmentDiscoverBinding.bindState(
@@ -70,7 +71,9 @@ class DiscoverFragment : Fragment() {
         }
         discoverRecyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
-            adapter = discoverAdapter
+            adapter = discoverAdapter.withLoadStateFooter(
+                footer = RecipeListModelLoadStateAdapter { discoverAdapter.retry() }
+            )
         }
 
         bindList(
@@ -87,6 +90,7 @@ class DiscoverFragment : Fragment() {
         pagingData: Flow<PagingData<RecipeListModel>>,
         onScrollChanged: (UiAction.Scroll) -> Unit
     ) {
+        retryButton.setOnClickListener { discoverAdapter.retry() }
         discoverRecyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (dy != 0) onScrollChanged(UiAction.Scroll(currentQuery = uiState.value.query))
@@ -120,6 +124,15 @@ class DiscoverFragment : Fragment() {
                 }
                 launch {
                     discoverAdapter.loadStateFlow.collect { loadState ->
+                        val isListEmpty = loadState.refresh is LoadState.NotLoading && discoverAdapter.itemCount == 0
+                        // show empty list
+                        emptyList.isVisible = isListEmpty
+                        // Only show the list if refresh succeeds
+                        discoverRecyclerview.isVisible = !isListEmpty && loadState.source.refresh !is LoadState.Loading
+                        // Show loading spinner during initial load or refresh.
+                        progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                        // Show the retry state if initial load or refresh fails.
+                        retryButton.isVisible = loadState.source.refresh is LoadState.Error
                         // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
                         val errorState = loadState.source.append as? LoadState.Error
                             ?: loadState.source.prepend as? LoadState.Error
