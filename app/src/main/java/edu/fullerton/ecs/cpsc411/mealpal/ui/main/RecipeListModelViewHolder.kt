@@ -7,6 +7,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.RecyclerView
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.RecipeListModelFooterViewItemBinding
+import timber.log.Timber
 
 class RecipeListModelViewHolder(
     private val binding: RecipeListModelFooterViewItemBinding,
@@ -18,7 +19,13 @@ class RecipeListModelViewHolder(
 
     fun bind(loadState: LoadState) {
         if (loadState is LoadState.Error) {
-            binding.errorMsg.text = loadState.error.localizedMessage
+            binding.errorMsg.text = when(val error = loadState.error.localizedMessage?.trim()) {
+                "HTTP 429" -> binding.root.context.getString(R.string.api_limit_exceeded)
+                else -> {
+                    Timber.i("Error: $error")
+                    error
+                }
+            }
         }
         binding.progressBar.isVisible = loadState is LoadState.Loading
         binding.retryButton.isVisible = loadState is LoadState.Error

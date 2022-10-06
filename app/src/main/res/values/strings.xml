@@ -25,4 +25,5 @@
     <string name="calories_label">Calories</string>
     <string name="no_results">No results 😓</string>
     <string name="retry">Retry</string>
+    <string name="api_limit_exceeded">Whoa there cowboy🤠\n It looks like you have exceeded the beta trial api limits, don\'t worry this will not be an issue at release.</string>
 </resources>
