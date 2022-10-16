@@ -5,11 +5,11 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import edu.fullerton.ecs.cpsc411.mealpal.network.NetworkRecipe
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 
 @Entity(tableName = "recipe_table")
 data class RecipeEntity(
 	@PrimaryKey val url: String,
-	val pageId: String?,
 	val saveTime: Long = System.currentTimeMillis(),
 	val title: String,
 	val image: String,
@@ -23,7 +23,9 @@ data class RecipeEntity(
 	val healthLabels: List<String>,
 	val cautions: List<String>,
 	@ColumnInfo(name = "is_saved")
-	val isSaved: Boolean = false
+	val isSaved: Boolean = false,
+	@Embedded(prefix = "discover_")
+	val query: DiscoverQuery
 )
 
 data class Images (

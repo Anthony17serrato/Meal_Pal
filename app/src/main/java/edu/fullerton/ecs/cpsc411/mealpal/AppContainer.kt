@@ -9,5 +9,5 @@ import kotlinx.coroutines.CoroutineScope
 class AppContainer(appContext: Context, applicationScope: CoroutineScope) {
 	private val database by lazy { MealPalDatabase.getDatabase(appContext) }
 	private val recipeRemoteDataSource by lazy { EdamamService.create() }
-	val repository by lazy { RecipeRepository(database.recipeDao(), recipeRemoteDataSource, applicationScope) }
+	val repository by lazy { RecipeRepository(database.recipeDao(), database.remoteKeysDao(), database, recipeRemoteDataSource, applicationScope) }
 }

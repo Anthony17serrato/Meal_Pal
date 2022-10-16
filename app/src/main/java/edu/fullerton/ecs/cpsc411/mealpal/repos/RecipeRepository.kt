@@ -1,24 +1,20 @@
 package edu.fullerton.ecs.cpsc411.mealpal.repos
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.map
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeDao
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
+import androidx.paging.*
+import edu.fullerton.ecs.cpsc411.mealpal.db.*
 import edu.fullerton.ecs.cpsc411.mealpal.network.EdamamService
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class RecipeRepository(
 	private val recipeDao: RecipeDao,
+	private val remoteKeysDao: RemoteKeysDao,
+	private val mealPalDatabase: MealPalDatabase,
 	private val recipeRemoteDataSource: EdamamService,
 	private val externalScope: CoroutineScope
 ) {
@@ -47,22 +43,29 @@ class RecipeRepository(
 
 	fun fetchRecipes(query: DiscoverQuery): Flow<PagingData<RecipeEntity>> {
 		Timber.i("Network request")
+		val pagingSourceFactory = {
+			recipeDao.recipesByQuery(
+				keyword = query.keyword,
+				minCalories = query.calMin,
+				maxCalories = query.calThresh,
+				healthLabels = query.hLabel
+			)
+		}
+		@OptIn(ExperimentalPagingApi::class)
 		return Pager(
 			config = PagingConfig(
 				pageSize = NETWORK_PAGE_SIZE,
 				enablePlaceholders = false
 			),
-			pagingSourceFactory = { EdamamPagingSource(recipeRemoteDataSource, query) }
+			remoteMediator = EdamamRemoteMediator(
+				query,
+				recipeRemoteDataSource,
+				mealPalDatabase,
+				recipeDao,
+				remoteKeysDao
+			),
+			pagingSourceFactory = pagingSourceFactory
 		).flow
-//		try {
-//			val response = api.getRecipes(query.keyword, calories = "${query.calMin}-${query.calThresh}")
-//			Timber.i("Network response ${response.hits.size}")
-//			response.hits.asEntityList(url).let {
-//				recipeDao.insertRecipes(it)
-//			}
-//		} catch (t: Throwable) {
-//			Timber.e("Caught request Exception $t")
-//		}
 	}
 
 	companion object {

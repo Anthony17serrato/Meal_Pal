@@ -1,6 +1,7 @@
 package edu.fullerton.ecs.cpsc411.mealpal.network
 
 import com.squareup.moshi.Json
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 
 data class RecipesResponse(
 	@Json(name = "hits") val hits: List<Hits>,
@@ -19,5 +20,5 @@ data class NextPage(
 	@Json(name = "href") val url: String?
 )
 
-fun List<Hits>.asEntityList(pageId: String?) =
-	this.map { it.recipe.asEntity(pageId) }
+fun List<Hits>.asEntityList(query: DiscoverQuery) =
+	this.map { it.recipe.asEntity(query) }

@@ -3,6 +3,7 @@ package edu.fullerton.ecs.cpsc411.mealpal.network
 import com.squareup.moshi.Json
 import edu.fullerton.ecs.cpsc411.mealpal.db.Images
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 
 data class NetworkRecipe(
 	val url: String,
@@ -28,7 +29,7 @@ data class VariantUrl(
 	val url: String?
 )
 
-fun NetworkRecipe.asEntity(pageId: String?) = RecipeEntity(
+fun NetworkRecipe.asEntity(query: DiscoverQuery) = RecipeEntity(
 	title = label,
 	image = image,
 	images = Images(images.thumbnail?.url, images.small?.url, images.regular?.url, images.large?.url),
@@ -39,6 +40,6 @@ fun NetworkRecipe.asEntity(pageId: String?) = RecipeEntity(
 	dietLabels = dietLabels,
 	healthLabels = healthLabels,
 	cautions = cautions,
-	pageId = pageId
+	query = query
 )
 

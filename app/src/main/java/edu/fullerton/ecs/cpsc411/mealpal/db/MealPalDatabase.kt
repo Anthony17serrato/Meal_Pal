@@ -7,11 +7,16 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 // Annotates class to be a Room Database with a table (entity) of the Word class
-@Database(entities = arrayOf(RecipeEntity::class), version = 1, exportSchema = false)
+@Database(
+	entities = [RecipeEntity::class, RemoteKeys::class],
+	version = 1,
+	exportSchema = false
+)
 @TypeConverters(Converters::class)
 abstract class MealPalDatabase : RoomDatabase() {
 
 	abstract fun recipeDao(): RecipeDao
+	abstract fun remoteKeysDao(): RemoteKeysDao
 
 	companion object {
 		// Singleton prevents multiple instances of database opening at the

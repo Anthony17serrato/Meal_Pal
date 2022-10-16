@@ -22,6 +22,8 @@ import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentDiscoverBinding
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.DiscoverAdapter
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.RecipeListModelLoadStateAdapter
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.RemotePresentationState
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.asRemotePresentationState
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverUiState
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModelFactory
@@ -69,14 +71,17 @@ class DiscoverFragment : Fragment() {
         val discoverAdapter = DiscoverAdapter { url ->
             onClickItem(url)
         }
+        val header = RecipeListModelLoadStateAdapter { discoverAdapter.retry() }
         discoverRecyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
-            adapter = discoverAdapter.withLoadStateFooter(
+            adapter = discoverAdapter.withLoadStateHeaderAndFooter(
+                header = header,
                 footer = RecipeListModelLoadStateAdapter { discoverAdapter.retry() }
             )
         }
 
         bindList(
+            header = header,
             discoverAdapter = discoverAdapter,
             uiState = discoverUiState,
             pagingData = pagingData,
@@ -85,6 +90,7 @@ class DiscoverFragment : Fragment() {
     }
 
     private fun FragmentDiscoverBinding.bindList(
+        header: RecipeListModelLoadStateAdapter,
         discoverAdapter: DiscoverAdapter,
         uiState: StateFlow<DiscoverUiState>,
         pagingData: Flow<PagingData<RecipeListModel>>,
@@ -97,10 +103,8 @@ class DiscoverFragment : Fragment() {
             }
         })
         val notLoading = discoverAdapter.loadStateFlow
-            // Only emit when REFRESH LoadState for the paging source changes.
-            .distinctUntilChangedBy { it.source.refresh }
-            // Only react to cases where REFRESH completes i.e., NotLoading.
-            .map { it.source.refresh is LoadState.NotLoading }
+            .asRemotePresentationState()
+            .map { it == RemotePresentationState.PRESENTED }
 
         val hasNotScrolledForCurrentSearch = uiState
             .map { it.hasNotScrolledForCurrentSearch }
@@ -124,15 +128,22 @@ class DiscoverFragment : Fragment() {
                 }
                 launch {
                     discoverAdapter.loadStateFlow.collect { loadState ->
+                        // Show a retry header if there was an error refreshing, and items were previously
+                        // cached OR default to the default prepend state
+                        header.loadState = loadState.mediator
+                            ?.refresh
+                            ?.takeIf { it is LoadState.Error && discoverAdapter.itemCount > 0 }
+                            ?: loadState.prepend
+
                         val isListEmpty = loadState.refresh is LoadState.NotLoading && discoverAdapter.itemCount == 0
                         // show empty list
                         emptyList.isVisible = isListEmpty
-                        // Only show the list if refresh succeeds
-                        discoverRecyclerview.isVisible = !isListEmpty && loadState.source.refresh !is LoadState.Loading
+                        // Only show the list if refresh succeeds, either from the the local db or the remote.
+                        discoverRecyclerview.isVisible = loadState.source.refresh is LoadState.NotLoading || loadState.mediator?.refresh is LoadState.NotLoading
                         // Show loading spinner during initial load or refresh.
-                        progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                        progressBar.isVisible = loadState.mediator?.refresh is LoadState.Loading
                         // Show the retry state if initial load or refresh fails.
-                        retryButton.isVisible = loadState.source.refresh is LoadState.Error
+                        retryButton.isVisible = loadState.mediator?.refresh is LoadState.Error && discoverAdapter.itemCount == 0
                         // Toast on any error, regardless of whether it came from RemoteMediator or PagingSource
                         val errorState = loadState.source.append as? LoadState.Error
                             ?: loadState.source.prepend as? LoadState.Error
