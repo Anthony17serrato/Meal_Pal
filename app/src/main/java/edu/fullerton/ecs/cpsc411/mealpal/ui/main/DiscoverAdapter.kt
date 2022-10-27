@@ -7,15 +7,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverItemUiState
 
 class DiscoverAdapter(private val onClick: (String) -> Unit)
-	: PagingDataAdapter<RecipeListModel, RecyclerView.ViewHolder>(RecipeListModelDiffCallback) {
+	: PagingDataAdapter<DiscoverItemUiState, RecyclerView.ViewHolder>(DiscoverItemUiStateDiffCallback) {
 
 	class RecipeViewHolder(itemView: View, val onClick: (String) -> Unit) : RecyclerView.ViewHolder(itemView) {
 		private val mealTitle: TextView = itemView.findViewById(R.id.meal_title)
@@ -24,31 +26,31 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 		private val mealImage: ImageView = itemView.findViewById(R.id.meal_img)
 		private var url: String? = null
 
-		init {
+		/* Bind recipe data. */
+		fun bind(discoverItem: DiscoverItemUiState) {
 			itemView.setOnClickListener {
+				discoverItem.onSelect()
 				url?.let {
 					onClick(it)
 				}
 			}
-		}
+			discoverItem.recipeListModel.let { recipe ->
+				url = recipe.url
+				mealTitle.text = recipe.title
+				calories.text = itemView.context.getString(R.string.calories_indicator, recipe.calories.toInt().toString())
+				Glide.with(mealImage.context).load(recipe.image).into(mealImage)
 
-		/* Bind recipe data. */
-		fun bind(recipe: RecipeListModel) {
-			url = recipe.url
-			mealTitle.text = recipe.title
-			calories.text = itemView.context.getString(R.string.calories_indicator, recipe.calories.toInt().toString())
-			Glide.with(mealImage.context).load(recipe.image).into(mealImage)
-
-			val joined = ArrayList<String>()
-			joined.addAll(recipe.dietLabels)
-			joined.addAll(recipe.healthLabels)
-			joined.addAll(recipe.cautions)
-			var info = "Info: "
-			for (item in joined){
-				info += "$item, "
+				val joined = ArrayList<String>()
+				joined.addAll(recipe.dietLabels)
+				joined.addAll(recipe.healthLabels)
+				joined.addAll(recipe.cautions)
+				var info = "Info: "
+				for (item in joined){
+					info += "$item, "
+				}
+				info = info.substring(0,info.length-2)
+				mealInfo.text = info
 			}
-			info = info.substring(0,info.length-2)
-			mealInfo.text = info
 		}
 	}
 
@@ -125,7 +127,8 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 				val trendingMeals = mutableListOf<RecipeListModel>()
 				for (recipe in 0 .. TRENDING_SIZE) {
 					getItem(recipe)?.let {
-						trendingMeals.add(it)
+						// TODO pass in DiscoverItemUiState
+						trendingMeals.add(it.recipeListModel)
 					}
 				}
 				holder.bind(trendingMeals)
@@ -144,5 +147,15 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 		private const val TRENDING = 1
 		private const val MEAL = 2
 		private const val TRENDING_SIZE = 4
+	}
+}
+
+object DiscoverItemUiStateDiffCallback : DiffUtil.ItemCallback<DiscoverItemUiState>() {
+	override fun areItemsTheSame(oldItem: DiscoverItemUiState, newItem: DiscoverItemUiState): Boolean {
+		return oldItem == newItem
+	}
+
+	override fun areContentsTheSame(oldItem: DiscoverItemUiState, newItem: DiscoverItemUiState): Boolean {
+		return oldItem.recipeListModel.saveTime == newItem.recipeListModel.saveTime
 	}
 }

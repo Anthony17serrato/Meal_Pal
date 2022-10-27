@@ -16,7 +16,7 @@ class DiscoverViewModel(
 	private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 	val discoverUiState: StateFlow<DiscoverUiState>
-	val pagingDataFlow: Flow<PagingData<RecipeListModel>>
+	val pagingDataFlow: Flow<PagingData<DiscoverItemUiState>>
 	val accept: (UiAction) -> Unit
 
 	init {
@@ -62,10 +62,15 @@ class DiscoverViewModel(
 		}
 	}
 
-	private fun searchRepo(queryString: DiscoverQuery) : Flow<PagingData<RecipeListModel>> =
+	private fun searchRepo(queryString: DiscoverQuery) : Flow<PagingData<DiscoverItemUiState>> =
 		recipeRepo.fetchRecipes(queryString)
 			.map { pagingData ->
-				pagingData.map { it.asRecipeListModel() }
+				pagingData.map { recipeEntity ->
+					DiscoverItemUiState(
+						recipeListModel = recipeEntity.asRecipeListModel(),
+						onSelect = { recipeRepo.viewNonPersistedRecipe(recipeEntity) }
+					)
+				}
 			}
 
 	override fun onCleared() {
@@ -84,6 +89,11 @@ data class DiscoverUiState(
 	val query: DiscoverQuery = DiscoverQuery(),
 	val lastQueryScrolled: DiscoverQuery = DiscoverQuery(),
 	val hasNotScrolledForCurrentSearch: Boolean = false
+)
+
+data class DiscoverItemUiState(
+	val recipeListModel: RecipeListModel,
+	val onSelect: () -> Unit
 )
 
 class DiscoverViewModelFactory(
