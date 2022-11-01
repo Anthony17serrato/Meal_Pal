@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import edu.fullerton.ecs.cpsc411.mealpal.R
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverItemUiState
 
 class DiscoverAdapter(private val onClick: (String) -> Unit)
@@ -86,7 +85,7 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 		}
 
 		/* Bind trending recipe data. */
-		fun bind(trendingRecipes: List<RecipeListModel>) {
+		fun bind(trendingRecipes: List<DiscoverItemUiState>) {
 			recipeAdapter.submitList(trendingRecipes)
 		}
 	}
@@ -124,11 +123,10 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 				val layoutParams: StaggeredGridLayoutManager.LayoutParams =
 			    		holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
 				layoutParams.isFullSpan = true
-				val trendingMeals = mutableListOf<RecipeListModel>()
+				val trendingMeals = mutableListOf<DiscoverItemUiState>()
 				for (recipe in 0 .. TRENDING_SIZE) {
 					getItem(recipe)?.let {
-						// TODO pass in DiscoverItemUiState
-						trendingMeals.add(it.recipeListModel)
+						trendingMeals.add(it)
 					}
 				}
 				holder.bind(trendingMeals)

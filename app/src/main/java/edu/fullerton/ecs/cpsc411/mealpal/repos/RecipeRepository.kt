@@ -39,7 +39,7 @@ class RecipeRepository(
 		merge(
 			recipeDao.getRecipe(url).filterNotNull(),
 			nonPersistedRecipe.filterNotNull().filter { it.url == url }
-		)
+		).distinctUntilChanged()
 
 	/**
 	 *	Starts a toggle worker that collects updates and persists them in a cancellation safe manner.
@@ -48,7 +48,7 @@ class RecipeRepository(
 	fun CoroutineScope.startToggleWorker() = launch {
 		for (toggledRecipe in _saveToggleChannel) {
 			externalScope.launch {
-				nonPersistedRecipe.update { null }
+				nonPersistedRecipe.update { toggledRecipe }
 				recipeDao.insertRecipe(toggledRecipe)
 			}.join()
 		}
@@ -70,7 +70,7 @@ class RecipeRepository(
 	}
 
 	/**
-	 * 	Pass a recipe entity that the user want's to view details of, this will cache the recipe but
+	 * 	Cache a recipe entity that the user want's to view details of, this will cache the recipe but
 	 * 	not persist it. Subsequent calls to this function will replace the cache with the latest
 	 * 	provided recipe.
 	 */
