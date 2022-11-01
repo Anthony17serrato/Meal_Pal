@@ -19,13 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import edu.fullerton.ecs.cpsc411.mealpal.*
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentDiscoverBinding
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.DiscoverAdapter
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.RecipeListModelLoadStateAdapter
-import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverUiState
-import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModel
-import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModelFactory
-import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.UiAction
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.*
 import edu.fullerton.ecs.cpsc411.mealpal.ui.recipedetails.RecipeDetailsActivity
 import edu.fullerton.ecs.cpsc411.mealpal.utils.MEAL_URL
 import kotlinx.coroutines.flow.*
@@ -63,7 +59,7 @@ class DiscoverFragment : Fragment() {
 
     private fun FragmentDiscoverBinding.bindState(
         discoverUiState: StateFlow<DiscoverUiState>,
-        pagingData: Flow<PagingData<RecipeListModel>>,
+        pagingData: Flow<PagingData<DiscoverItemUiState>>,
         uiActions: (UiAction) -> Unit
     ) {
         val discoverAdapter = DiscoverAdapter { url ->
@@ -87,7 +83,7 @@ class DiscoverFragment : Fragment() {
     private fun FragmentDiscoverBinding.bindList(
         discoverAdapter: DiscoverAdapter,
         uiState: StateFlow<DiscoverUiState>,
-        pagingData: Flow<PagingData<RecipeListModel>>,
+        pagingData: Flow<PagingData<DiscoverItemUiState>>,
         onScrollChanged: (UiAction.Scroll) -> Unit
     ) {
         retryButton.setOnClickListener { discoverAdapter.retry() }

@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import edu.fullerton.ecs.cpsc411.mealpal.R
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverItemUiState
 
-class TrendingAdapter(private val onClick: (String) -> Unit) : ListAdapter<RecipeListModel, TrendingAdapter.RecipeViewHolder>(RecipeListModelDiffCallback) {
+class TrendingAdapter(private val onClick: (String) -> Unit)
+	: ListAdapter<DiscoverItemUiState, TrendingAdapter.RecipeViewHolder>(DiscoverItemUiStateDiffCallback) {
 
 	class RecipeViewHolder(itemView: View, val onClick: (String) -> Unit) : RecyclerView.ViewHolder(itemView) {
 		private val mealTitle: TextView = itemView.findViewById(R.id.trendingTitle)
@@ -20,24 +21,26 @@ class TrendingAdapter(private val onClick: (String) -> Unit) : ListAdapter<Recip
 		private val viewRecipeButton: Button= itemView.findViewById(R.id.viewRecipeButton)
 		private var url: String? = null
 
-		init {
+		/* Bind recipe data. */
+		fun bind(discoverItem: DiscoverItemUiState) {
+			discoverItem.recipeListModel.let { recipe ->
+				url = recipe.url
+				mealTitle.text = recipe.title
+				Glide.with(mealImage.context).load(recipe.image).into(mealImage)
+			}
 			itemView.setOnClickListener {
-				url?.let {
-					onClick(it)
-				}
+				itemSelected(discoverItem)
 			}
 			viewRecipeButton.setOnClickListener {
-				url?.let {
-					onClick(it)
-				}
+				itemSelected(discoverItem)
 			}
 		}
 
-		/* Bind recipe data. */
-		fun bind(recipe: RecipeListModel) {
-			url = recipe.url
-			mealTitle.text = recipe.title
-			Glide.with(mealImage.context).load(recipe.image).into(mealImage)
+		private fun itemSelected(discoverItem: DiscoverItemUiState) {
+			discoverItem.onSelect()
+			url?.let {
+				onClick(it)
+			}
 		}
 	}
 

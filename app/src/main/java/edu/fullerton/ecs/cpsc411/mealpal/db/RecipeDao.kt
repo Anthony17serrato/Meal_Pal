@@ -23,5 +23,5 @@ interface RecipeDao {
 //	fun getQueriedRecipes(queryUrl: String) : Flow<List<RecipeListModel>>
 
 	@Query("SELECT * FROM recipe_table WHERE url == :recipeUrl")
-	fun getRecipe(recipeUrl: String) : Flow<RecipeEntity>
+	fun getRecipe(recipeUrl: String) : Flow<RecipeEntity?>
 }
