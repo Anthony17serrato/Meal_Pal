@@ -29,19 +29,4 @@ interface EdamamService {
 //		@Path("maxCalories") maxCalories: String,
 //		@Path("healthLabels") healthLabels: String
 //	): RecipesResponse
-
-	companion object {
-		private const val BASE_URL = "https://api.edamam.com/api/recipes/"
-
-		fun create(): EdamamService {
-			val moshi = Moshi.Builder()
-				.add(KotlinJsonAdapterFactory())
-				.build()
-			return Retrofit.Builder()
-				.baseUrl(BASE_URL)
-				.addConverterFactory(MoshiConverterFactory.create(moshi))
-				.build()
-				.create(EdamamService::class.java)
-		}
-	}
 }

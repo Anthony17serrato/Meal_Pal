@@ -17,6 +17,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.*
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentDiscoverBinding
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.DiscoverAdapter
@@ -28,13 +29,9 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@AndroidEntryPoint
 class DiscoverFragment : Fragment() {
-    private val discoverViewModel: DiscoverViewModel by activityViewModels {
-        DiscoverViewModelFactory(
-            this,
-            (activity?.application as MealPalApplication).appContainer.repository
-        )
-    }
+    private val discoverViewModel: DiscoverViewModel by activityViewModels()
     private var _binding: FragmentDiscoverBinding? = null
     private val binding get() = _binding!!
 

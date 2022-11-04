@@ -12,19 +12,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import edu.fullerton.ecs.cpsc411.mealpal.MealPalApplication
+import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.SavedMealsAdapter
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.SavedMealsViewModel
-import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.SavedMealsViewModelFactory
 import edu.fullerton.ecs.cpsc411.mealpal.ui.recipedetails.RecipeDetailsActivity
 import edu.fullerton.ecs.cpsc411.mealpal.utils.MEAL_URL
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SavedMealsFragment : Fragment() {
-    private val recipeDetailsViewModel: SavedMealsViewModel by viewModels {
-        SavedMealsViewModelFactory((activity?.application as MealPalApplication).appContainer.repository)
-    }
+    private val recipeDetailsViewModel: SavedMealsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

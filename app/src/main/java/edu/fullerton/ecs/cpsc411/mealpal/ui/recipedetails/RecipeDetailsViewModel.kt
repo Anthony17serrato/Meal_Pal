@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
+import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.modules.DefaultDispatcher
 import edu.fullerton.ecs.cpsc411.mealpal.repos.RecipeRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -13,10 +15,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RecipeDetailsViewModel(
+@HiltViewModel
+class RecipeDetailsViewModel @Inject constructor(
 	private val recipeRepo: RecipeRepository,
-	private val defaultDispatcher: CoroutineDispatcher = Dispatchers.Default
+	@DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 	private val _recipeUiState = MutableStateFlow(RecipeModel())
 	val recipeUiState = _recipeUiState.asStateFlow()
@@ -55,13 +59,3 @@ data class RecipeModel(
 	val recipeEntity: RecipeEntity? = null,
 	val palette: Palette? = null
 )
-
-class RecipeDetailsViewModelFactory(private val recipeRepo: RecipeRepository) : ViewModelProvider.Factory {
-	override fun <T : ViewModel> create(modelClass: Class<T>): T {
-		if (modelClass.isAssignableFrom(RecipeDetailsViewModel::class.java)) {
-			@Suppress("UNCHECKED_CAST")
-			return RecipeDetailsViewModel(recipeRepo) as T
-		}
-		throw IllegalArgumentException("Unknown ViewModel class")
-	}
-}

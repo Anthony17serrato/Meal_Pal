@@ -9,11 +9,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.fragments.SearchRecipeDialogFragment
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.ActivityMainBinding
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     var sectionsPagerAdapter: SectionsPagerAdapter? = null
     var viewPager: ViewPager2? = null

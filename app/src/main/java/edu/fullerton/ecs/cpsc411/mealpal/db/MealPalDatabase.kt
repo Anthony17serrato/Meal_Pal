@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 // Annotates class to be a Room Database with a table (entity) of the Word class
-@Database(entities = arrayOf(RecipeEntity::class), version = 1, exportSchema = false)
+@Database(entities = [RecipeEntity::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class MealPalDatabase : RoomDatabase() {
 

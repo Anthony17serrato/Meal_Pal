@@ -5,13 +5,16 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import androidx.savedstate.SavedStateRegistryOwner
+import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.db.asRecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.repos.RecipeRepository
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DiscoverViewModel(
+@HiltViewModel
+class DiscoverViewModel @Inject constructor(
 	private val recipeRepo: RecipeRepository,
 	private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -95,23 +98,6 @@ data class DiscoverItemUiState(
 	val recipeListModel: RecipeListModel,
 	val onSelect: () -> Unit
 )
-
-class DiscoverViewModelFactory(
-	owner: SavedStateRegistryOwner,
-	private val recipeRepo: RecipeRepository
-) : AbstractSavedStateViewModelFactory(owner, null) {
-	override fun <T : ViewModel> create(
-		key: String,
-		modelClass: Class<T>,
-		handle: SavedStateHandle
-	): T {
-		if (modelClass.isAssignableFrom(DiscoverViewModel::class.java)) {
-			@Suppress("UNCHECKED_CAST")
-			return DiscoverViewModel(recipeRepo, handle) as T
-		}
-		throw IllegalArgumentException("Unknown ViewModel class")
-	}
-}
 
 private const val LAST_SEARCH_QUERY: String = "last_search_query"
 private val DEFAULT_QUERY = DiscoverQuery()
