@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeDao
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.modules.ApplicationScope
 import edu.fullerton.ecs.cpsc411.mealpal.network.EdamamService
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 import kotlinx.coroutines.CoroutineScope
@@ -14,11 +15,14 @@ import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RecipeRepository(
+@Singleton
+class RecipeRepository @Inject constructor(
 	private val recipeDao: RecipeDao,
 	private val recipeRemoteDataSource: EdamamService,
-	private val externalScope: CoroutineScope
+	@ApplicationScope private val externalScope: CoroutineScope
 ) {
 	// Conflated channel to prevent unnecessary IO if user spams the save toggle
 	private val _saveToggleChannel = Channel<RecipeEntity> (Channel.CONFLATED)

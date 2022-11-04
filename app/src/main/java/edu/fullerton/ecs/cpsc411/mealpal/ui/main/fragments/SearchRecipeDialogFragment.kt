@@ -25,12 +25,7 @@ import kotlinx.coroutines.launch
 class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentSearchRecipeDialogBinding? = null
     private val binding get() = _binding!!
-    private val discoverViewModel: DiscoverViewModel by activityViewModels {
-        DiscoverViewModelFactory(
-            this,
-            (activity?.application as MealPalApplication).appContainer.repository
-        )
-    }
+    private val discoverViewModel: DiscoverViewModel by activityViewModels()
 
     override fun getTheme(): Int = R.style.BottomSheetDialogTheme
 

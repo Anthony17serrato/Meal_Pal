@@ -21,6 +21,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.MealPalApplication
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.ActivityRecipieDetailsBinding
@@ -30,10 +31,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class RecipeDetailsActivity : AppCompatActivity() {
-    private val recipeDetailsViewModel: RecipeDetailsViewModel by viewModels {
-        RecipeDetailsViewModelFactory((application as MealPalApplication).appContainer.repository)
-    }
+    private val recipeDetailsViewModel: RecipeDetailsViewModel by viewModels()
     private lateinit var binding: ActivityRecipieDetailsBinding
     var tabBuilder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
 
