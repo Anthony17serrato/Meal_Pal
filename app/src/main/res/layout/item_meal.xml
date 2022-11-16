@@ -13,16 +13,14 @@
         android:layout_marginLeft="7dp"
         android:layout_marginTop="10dp"
         android:layout_marginRight="7dp"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="0dp"
-        app:strokeColor="@color/colorBorderGrey"
-        app:strokeWidth="1dp">
+        style="?attr/materialCardViewFilledStyle"
+        app:cardCornerRadius="12dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
+            <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/meal_img"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
@@ -31,23 +29,23 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/bottomRoundedImage"
                 app:srcCompat="@drawable/ic_launcher_background"
                 tools:ignore="ImageContrastCheck" />
 
             <TextView
                 android:id="@+id/meal_title"
-                tools:text="Meal Title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/open_sans_bold"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/meal_img" />
+                app:layout_constraintTop_toBottomOf="@+id/meal_img"
+                tools:text="Meal Title" />
 
             <ImageView
                 android:id="@+id/imageView3"
