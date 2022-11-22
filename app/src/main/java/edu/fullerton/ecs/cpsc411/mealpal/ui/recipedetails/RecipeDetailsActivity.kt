@@ -1,5 +1,6 @@
 package edu.fullerton.ecs.cpsc411.mealpal.ui.recipedetails
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -65,6 +66,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
                         }
                 }
                 launch {
+                    // TODO Use ?attr surface and primary colors instead for defaults
                     val defaultLightColor = ContextCompat.getColor(this@RecipeDetailsActivity, R.color.colorPrimary)
                     val defaultVibrantColor = ContextCompat.getColor(this@RecipeDetailsActivity, R.color.colorBorderGrey)
                     val defaultDarkColor = ContextCompat.getColor(this@RecipeDetailsActivity, R.color.mtrlGrey)
@@ -73,18 +75,32 @@ class RecipeDetailsActivity : AppCompatActivity() {
                         .distinctUntilChanged()
                         .collect { palette ->
                             palette?.let {
-                                it.getLightVibrantColor(defaultLightColor).let { color ->
-                                    binding.recipieview.setBackgroundColor(color)
-                                    window.statusBarColor = color
-                                    window.navigationBarColor = color
-                                    tabBuilder = CustomTabsIntent.Builder().setToolbarColor(color)
-                                }
-                                it.getLightVibrantColor(defaultVibrantColor).let { color ->
-                                    binding.cardsave.setCardBackgroundColor(ColorUtils.setAlphaComponent(color, 100))
-                                }
-                                it.getDarkMutedColor(defaultDarkColor).let { color ->
-                                    binding.recipeTitle.setTextColor(color)
-                                    binding.tving.setTextColor(color)
+                                if (isUsingNightModeResources()) {
+                                    it.getLightVibrantColor(defaultLightColor).let { color ->
+                                        binding.recipeTitle.setTextColor(color)
+                                        binding.tving.setTextColor(color)
+                                    }
+                                    it.getDarkMutedColor(defaultDarkColor).let { color ->
+                                        binding.cardsave.setCardBackgroundColor(ColorUtils.setAlphaComponent(color, 100))
+                                        binding.recipieview.setBackgroundColor(color)
+                                        window.statusBarColor = color
+                                        window.navigationBarColor = color
+                                        tabBuilder = CustomTabsIntent.Builder().setToolbarColor(color)
+                                    }
+                                } else {
+                                    it.getLightVibrantColor(defaultLightColor).let { color ->
+                                        binding.recipieview.setBackgroundColor(color)
+                                        window.statusBarColor = color
+                                        window.navigationBarColor = color
+                                        tabBuilder = CustomTabsIntent.Builder().setToolbarColor(color)
+                                    }
+                                    it.getLightVibrantColor(defaultVibrantColor).let { color ->
+                                        binding.cardsave.setCardBackgroundColor(ColorUtils.setAlphaComponent(color, 100))
+                                    }
+                                    it.getDarkMutedColor(defaultDarkColor).let { color ->
+                                        binding.recipeTitle.setTextColor(color)
+                                        binding.tving.setTextColor(color)
+                                    }
                                 }
                             }
                         }
@@ -159,5 +175,14 @@ class RecipeDetailsActivity : AppCompatActivity() {
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
             })
+    }
+
+    private fun isUsingNightModeResources(): Boolean {
+        return when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+            Configuration.UI_MODE_NIGHT_YES -> true
+            Configuration.UI_MODE_NIGHT_NO -> false
+            Configuration.UI_MODE_NIGHT_UNDEFINED -> false
+            else -> false
+        }
     }
 }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/discoverFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_round_travel_explore_24"
+        android:title="@string/discover_label" />
+
+    <item
+        android:id="@+id/savedMealsFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_round_star_border_24"
+        android:title="@string/my_meals_label" />
+</menu>

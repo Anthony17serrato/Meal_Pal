@@ -41,6 +41,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="@font/open_sans_bold"
+                android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -51,12 +52,12 @@
                 android:id="@+id/imageView3"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
+                android:contentDescription="@string/calories_icon"
                 app:layout_constraintStart_toStartOf="@+id/meal_title"
                 app:layout_constraintTop_toBottomOf="@+id/meal_title"
                 app:srcCompat="@drawable/calories"
-                tools:ignore="ImageContrastCheck"
-                android:contentDescription="@string/calories_icon" />
+                tools:ignore="ImageContrastCheck" />
 
             <TextView
                 android:id="@+id/caloriespreview"

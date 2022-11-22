@@ -5,16 +5,20 @@
       <map>
         <entry key="app/src/main/res/drawable/bottom_rounded_corners.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_round_star_border_24.xml" value="0.1055" />
+        <entry key="app/src/main/res/drawable/round_scrubber.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/rounded_dialog.xml" value="0.1" />
         <entry key="app/src/main/res/font/exo_bold.xml" value="0.35185185185185186" />
         <entry key="app/src/main/res/font/open_sans_bold.xml" value="0.35185185185185186" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.35643115942028986" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.5" />
         <entry key="app/src/main/res/layout/activity_recipie_details.xml" value="0.48020833333333335" />
         <entry key="app/src/main/res/layout/fragment_discover.xml" value="0.5" />
+        <entry key="app/src/main/res/layout/fragment_saved_meals.xml" value="0.4134963768115942" />
         <entry key="app/src/main/res/layout/fragment_search_recipe_dialog.xml" value="0.48020833333333335" />
         <entry key="app/src/main/res/layout/item_meal.xml" value="0.48020833333333335" />
         <entry key="app/src/main/res/layout/item_trend.xml" value="0.5635416666666667" />
         <entry key="app/src/main/res/layout/item_trend_meal.xml" value="0.447463768115942" />
         <entry key="app/src/main/res/layout/recipe_list_model_footer_view_item.xml" value="0.2735562310030395" />
+        <entry key="app/src/main/res/menu/bottom_navigation_menu.xml" value="0.39444444444444443" />
         <entry key="app/src/main/res/menu/main_menu.xml" value="0.48020833333333335" />
       </map>
     </option>

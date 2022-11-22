@@ -27,4 +27,7 @@
     <string name="retry">Retry</string>
     <string name="api_limit_exceeded">Whoa there cowboy🤠\n It looks like you have exceeded the beta trial api limits, don\'t worry this will not be an issue at release.</string>
     <string name="trending_header">Trending</string>
+    <string name="settings">Settings</string>
+    <string name="discover_label">Discover</string>
+    <string name="my_meals_label">My Meals</string>
 </resources>
