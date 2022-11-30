@@ -51,8 +51,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        binding.searchParams.inputType = InputType.TYPE_NULL
-        binding.searchArea.setOnClickListener {
+        binding.searchBar.setOnClickListener {
             val newFragment: BottomSheetDialogFragment= SearchRecipeDialogFragment()
 
             val ft =
