@@ -1,18 +1,15 @@
 package edu.fullerton.ecs.cpsc411.mealpal.ui.main
 
 import android.os.Bundle
-import android.text.InputType
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.fragments.SearchRecipeDialogFragment
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.ActivityMainBinding
+import edu.fullerton.ecs.cpsc411.mealpal.utils.getColorFromAttr
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -27,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigation.setupWithNavController(navController)
+        //binding.appBarLayout.setLiftableOverrideEnabled(true)
+        binding.appBarLayout.setBackgroundColor(getColorFromAttr(R.attr.colorSurface))
 
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {

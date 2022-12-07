@@ -6,13 +6,11 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableStringBuilder
-import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.text.bold
@@ -23,7 +21,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import dagger.hilt.android.AndroidEntryPoint
-import edu.fullerton.ecs.cpsc411.mealpal.MealPalApplication
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.ActivityRecipieDetailsBinding
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
@@ -36,16 +33,12 @@ import kotlinx.coroutines.launch
 class RecipeDetailsActivity : AppCompatActivity() {
     private val recipeDetailsViewModel: RecipeDetailsViewModel by viewModels()
     private lateinit var binding: ActivityRecipieDetailsBinding
-    var tabBuilder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
+    private var tabBuilder: CustomTabsIntent.Builder = CustomTabsIntent.Builder()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecipieDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        //Set an id to the layout
-        val currentLayout =
-            findViewById<View>(R.id.recipieview) as CoordinatorLayout
 
         val window = window
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -82,14 +75,14 @@ class RecipeDetailsActivity : AppCompatActivity() {
                                     }
                                     it.getDarkMutedColor(defaultDarkColor).let { color ->
                                         binding.cardsave.setCardBackgroundColor(ColorUtils.setAlphaComponent(color, 100))
-                                        binding.recipieview.setBackgroundColor(color)
+                                        binding.recipeScrollView.setBackgroundColor(color)
                                         window.statusBarColor = color
                                         window.navigationBarColor = color
                                         tabBuilder = CustomTabsIntent.Builder().setToolbarColor(color)
                                     }
                                 } else {
                                     it.getLightVibrantColor(defaultLightColor).let { color ->
-                                        binding.recipieview.setBackgroundColor(color)
+                                        binding.recipeScrollView.setBackgroundColor(color)
                                         window.statusBarColor = color
                                         window.navigationBarColor = color
                                         tabBuilder = CustomTabsIntent.Builder().setToolbarColor(color)
@@ -115,7 +108,6 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
         binding.saveIcon.setOnClickListener {
             recipeDetailsViewModel.onSaveToggle()
-//            Snackbar.make(save.rootView, "Recipe Saved", Snackbar.LENGTH_SHORT).setBackgroundTint(resources.getColor(R.color.colorAccent)).show()
         }
     }
 
@@ -144,7 +136,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.yield.setText(yieldSpannable, TextView.BufferType.SPANNABLE)
         binding.calories.text = getString(R.string.calories_indicator, recipeEntity.calories.toInt().toString())
         binding.recipeTitle.text = recipeEntity.title
-        Glide.with(binding.featuredimage.context)
+        Glide.with(binding.recipeImage.context)
             .load(
                 when {
                     recipeEntity.images.large != null -> {
@@ -164,7 +156,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
                     }
                 }
             )
-            .into(binding.featuredimage)
+            .into(binding.recipeImage)
         Glide.with(this)
             .asBitmap()
             .load(recipeEntity.image)

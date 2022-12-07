@@ -1,35 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- TODO Rewrite this entire layout-->
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/recipieview"
+    android:id="@+id/recipe_scroll_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.recipedetails.RecipeDetailsActivity">
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
+            android:id="@+id/materialCardView2"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="10dp"
-            app:cardCornerRadius="15dp">
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:cardCornerRadius="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/featuredimage"
+                android:id="@+id/recipe_image"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:adjustViewBounds="false"
+                android:contentDescription="@string/image_of_the_recipe_helper"
                 android:scaleType="centerCrop"
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -38,7 +37,7 @@
                 style="@style/CustomCardViewStyle"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 app:cardElevation="0dp">
 
                 <ImageView
@@ -48,32 +47,55 @@
                     android:layout_gravity="center_horizontal|center_vertical"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
-                    android:contentDescription="Icon Save"
-                    app:srcCompat="@drawable/ic_round_star_border_24" />
+                    android:contentDescription="@string/icon_save"
+                    app:srcCompat="@drawable/ic_round_star_border_24"
+                    tools:ignore="ImageContrastCheck"
+                    android:focusable="true" />
             </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView2"
+            app:shapeAppearance="@style/ShapeAppearance.CutCorners">
+
+
+            <TextView
+                android:id="@+id/recipeTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:fontFamily="@font/exo_bold"
+                android:gravity="center_horizontal"
+                android:textSize="24sp"
+                tools:text="Italian Pot Roast very long title that spanns" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/carditem"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:background="?attr/colorSurface"
             android:minHeight="400dp"
-            app:cardCornerRadius="15dp" >
+            app:cardCornerRadius="15dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_title">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                <TextView
-                    android:id="@+id/recipeTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:fontFamily="@font/exo_bold"
-                    android:gravity="center_horizontal"
-                    android:text="Title"
-                    android:textSize="24sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -85,19 +107,21 @@
                         android:id="@+id/imageView4"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        app:srcCompat="@drawable/calories" />
+                        android:contentDescription="@string/calories_icon"
+                        app:srcCompat="@drawable/calories"
+                        tools:ignore="ImageContrastCheck" />
 
                     <TextView
                         android:id="@+id/calories"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/open_sans_bold"
-                        android:text="Calories"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        tools:text="409 Calories/Serving" />
                 </LinearLayout>
 
                 <TextView
@@ -106,7 +130,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="Recipe Yield: "
+                    android:text="@string/recipe_yield_label"
                     android:textSize="18sp" />
 
                 <TextView
@@ -115,20 +139,20 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:text="Info: "
+                    android:text="@string/info_label"
                     android:textSize="18sp" />
-
 
 
                 <TextView
                     android:id="@+id/tving"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ingredients"
                     android:layout_marginTop="10dp"
+                    android:text="@string/ingredients_label"
                     android:textAlignment="center"
                     android:textSize="24sp"
                     android:textStyle="bold" />
+
                 <View
                     android:id="@+id/view2"
                     android:layout_width="match_parent"
@@ -141,8 +165,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="ingredients"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"
+                    tools:text="1 lettuce\n2 tomatoes \n3 cucumber" />
 
 
                 <com.google.android.material.button.MaterialButton
@@ -152,16 +176,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginBottom="16dp"
-                    android:text="View Instructions"
-                    android:clickable="true"
+                    android:text="@string/view_instructions_button"
                     app:elevation="0dp" />
-
             </LinearLayout>
-
-
         </com.google.android.material.card.MaterialCardView>
-    </LinearLayout>
-    </ScrollView>
-
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

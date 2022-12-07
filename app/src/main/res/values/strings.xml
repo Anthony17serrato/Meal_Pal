@@ -31,4 +31,10 @@
     <string name="discover_label">Discover</string>
     <string name="my_meals_label">My Meals</string>
     <string name="search_icon">Search Icon</string>
+    <string name="image_of_the_recipe_helper">Image of the recipe</string>
+    <string name="view_instructions_button">View Instructions</string>
+    <string name="ingredients_label">Ingredients</string>
+    <string name="info_label">Info:</string>
+    <string name="recipe_yield_label">Recipe Yield:</string>
+    <string name="icon_save">Icon Save</string>
 </resources>
