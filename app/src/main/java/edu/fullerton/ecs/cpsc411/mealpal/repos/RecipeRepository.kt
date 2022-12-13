@@ -3,9 +3,8 @@ package edu.fullerton.ecs.cpsc411.mealpal.repos
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeDao
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
+import androidx.room.withTransaction
+import edu.fullerton.ecs.cpsc411.mealpal.db.*
 import edu.fullerton.ecs.cpsc411.mealpal.modules.ApplicationScope
 import edu.fullerton.ecs.cpsc411.mealpal.network.EdamamService
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
@@ -20,15 +19,17 @@ import javax.inject.Singleton
 
 @Singleton
 class RecipeRepository @Inject constructor(
+	private val mealPalDatabase: MealPalDatabase,
 	private val recipeDao: RecipeDao,
+	private val ingredientDao: IngredientDao,
 	private val recipeRemoteDataSource: EdamamService,
 	@ApplicationScope private val externalScope: CoroutineScope
 ) {
 	// Conflated channel to prevent unnecessary IO if user spams the save toggle
-	private val _saveToggleChannel = Channel<RecipeEntity> (Channel.CONFLATED)
-	val saveToggleChannel: SendChannel<RecipeEntity> = _saveToggleChannel
+	private val _saveToggleChannel = Channel<RecipeWithIngredients> (Channel.CONFLATED)
+	val saveToggleChannel: SendChannel<RecipeWithIngredients> = _saveToggleChannel
 	// Used to display recipes that have not been saved by the user
-	private var nonPersistedRecipe: MutableStateFlow<RecipeEntity?> = MutableStateFlow(null)
+	private var nonPersistedRecipe: MutableStateFlow<RecipeWithIngredients?> = MutableStateFlow(null)
 
 	/**
 	 * Retrieves all recipes that the user has saved
@@ -39,10 +40,10 @@ class RecipeRepository @Inject constructor(
 	 * 	A stream of RecipeEntity that matches the provided URL, searches for both non-persisted and
 	 * 	persisted RecipeEntities that match the URL.
 	 */
-	fun getRecipe(url: String) : Flow<RecipeEntity> =
+	fun getRecipe(url: String) : Flow<RecipeWithIngredients> =
 		merge(
-			recipeDao.getRecipe(url).filterNotNull(),
-			nonPersistedRecipe.filterNotNull().filter { it.url == url }
+			recipeDao.getRecipeWithIngredients(url).filterNotNull(),
+			nonPersistedRecipe.filterNotNull().filter { it.recipe.url == url }
 		).distinctUntilChanged()
 
 	/**
@@ -53,7 +54,11 @@ class RecipeRepository @Inject constructor(
 		for (toggledRecipe in _saveToggleChannel) {
 			externalScope.launch {
 				nonPersistedRecipe.update { toggledRecipe }
-				recipeDao.insertRecipe(toggledRecipe)
+				mealPalDatabase.withTransaction {
+					recipeDao.insertRecipe(toggledRecipe.recipe)
+					ingredientDao.insertIngredients(toggledRecipe.ingredients)
+				}
+
 			}.join()
 		}
 	}
@@ -62,7 +67,7 @@ class RecipeRepository @Inject constructor(
 	 * 	Returns a flow of PagingData given a query to create a search on
 	 * 	@param query the query of recipes to search for
 	 */
-	fun fetchRecipes(query: DiscoverQuery): Flow<PagingData<RecipeEntity>> {
+	fun fetchRecipes(query: DiscoverQuery): Flow<PagingData<RecipeWithIngredients>> {
 		Timber.i("Network request")
 		return Pager(
 			config = PagingConfig(
@@ -78,7 +83,7 @@ class RecipeRepository @Inject constructor(
 	 * 	not persist it. Subsequent calls to this function will replace the cache with the latest
 	 * 	provided recipe.
 	 */
-	fun viewNonPersistedRecipe(recipe: RecipeEntity) = nonPersistedRecipe.update { recipe }
+	fun viewNonPersistedRecipe(recipe: RecipeWithIngredients) = nonPersistedRecipe.update { recipe }
 
 	companion object {
 		const val NETWORK_PAGE_SIZE = 20

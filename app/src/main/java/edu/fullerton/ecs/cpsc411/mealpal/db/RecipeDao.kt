@@ -1,9 +1,6 @@
 package edu.fullerton.ecs.cpsc411.mealpal.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -21,7 +18,7 @@ interface RecipeDao {
 //	@Query("SELECT url, saveTime, title, image, calories, diet_labels, health_labels, cautions" +
 //		   " FROM recipe_table WHERE query_url == :queryUrl")
 //	fun getQueriedRecipes(queryUrl: String) : Flow<List<RecipeListModel>>
-
+	@Transaction
 	@Query("SELECT * FROM recipe_table WHERE url == :recipeUrl")
-	fun getRecipe(recipeUrl: String) : Flow<RecipeEntity?>
+	fun getRecipeWithIngredients(recipeUrl: String) : Flow<RecipeWithIngredients?>
 }

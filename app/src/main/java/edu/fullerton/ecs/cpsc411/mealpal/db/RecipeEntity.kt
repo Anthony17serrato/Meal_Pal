@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import edu.fullerton.ecs.cpsc411.mealpal.network.NetworkRecipe
 
 @Entity(tableName = "recipe_table")
 data class RecipeEntity(
@@ -14,7 +13,6 @@ data class RecipeEntity(
 	val title: String,
 	val image: String,
 	@Embedded val images: Images,
-	val ingredients: List<String>,
 	val calories: Double = 0.0,
 	val yield: Double = 0.0,
 	@ColumnInfo(name = "diet_labels")

@@ -2,14 +2,16 @@ package edu.fullerton.ecs.cpsc411.mealpal.network
 
 import com.squareup.moshi.Json
 import edu.fullerton.ecs.cpsc411.mealpal.db.Images
+import edu.fullerton.ecs.cpsc411.mealpal.db.IngredientEntity
 import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeWithIngredients
 
 data class NetworkRecipe(
 	val url: String,
 	val label: String,
 	val image: String,
 	val images: ImageVariants,
-	val ingredientLines: List<String>,
+	val ingredients: List<Ingredient>,
 	val calories: Double = 0.0,
 	val yield: Double = 0.0,
 	val dietLabels: List<String>,
@@ -24,21 +26,35 @@ data class ImageVariants(
 	@Json(name = "LARGE") val large: VariantUrl?
 )
 
+data class Ingredient(
+	val text: String,
+	@Json(name = "image") val imageUrl: String?
+)
+
 data class VariantUrl(
 	val url: String?
 )
 
-fun NetworkRecipe.asEntity(pageId: String?) = RecipeEntity(
-	title = label,
-	image = image,
-	images = Images(images.thumbnail?.url, images.small?.url, images.regular?.url, images.large?.url),
-	ingredients = ingredientLines,
-	url = url,
-	calories = calories/yield,
-	yield = yield,
-	dietLabels = dietLabels,
-	healthLabels = healthLabels,
-	cautions = cautions,
-	pageId = pageId
+private fun Ingredient.asIngredientEntity(entityId: String) = IngredientEntity(
+	entityId= entityId,
+	text= text,
+	imageUrl = imageUrl
 )
 
+private fun List<Ingredient>.asIngredientEntityList(entityId: String) = this.map { it.asIngredientEntity(entityId) }
+
+fun NetworkRecipe.asRecipeWithIngredients(pageId: String?) = RecipeWithIngredients(
+	recipe = RecipeEntity(
+		title = label,
+		image = image,
+		images = Images(images.thumbnail?.url, images.small?.url, images.regular?.url, images.large?.url),
+		url = url,
+		calories = calories/yield,
+		yield = yield,
+		dietLabels = dietLabels,
+		healthLabels = healthLabels,
+		cautions = cautions,
+		pageId = pageId
+	),
+	ingredients = ingredients.asIngredientEntityList(url)
+)

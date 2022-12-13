@@ -20,4 +20,4 @@ data class NextPage(
 )
 
 fun List<Hits>.asEntityList(pageId: String?) =
-	this.map { it.recipe.asEntity(pageId) }
+	this.map { it.recipe.asRecipeWithIngredients(pageId) }

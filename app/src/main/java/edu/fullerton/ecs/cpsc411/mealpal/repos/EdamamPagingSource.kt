@@ -2,7 +2,7 @@ package edu.fullerton.ecs.cpsc411.mealpal.repos
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.network.EdamamService
 import edu.fullerton.ecs.cpsc411.mealpal.network.asEntityList
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
@@ -10,13 +10,12 @@ import okio.IOException
 import retrofit2.HttpException
 import timber.log.Timber
 import java.net.URLDecoder
-import java.net.URLEncoder
 
 class EdamamPagingSource(
 	private val service: EdamamService,
 	private val query: DiscoverQuery
-) : PagingSource<String, RecipeEntity>() {
-	override suspend fun load(params: LoadParams<String>): LoadResult<String, RecipeEntity> {
+) : PagingSource<String, RecipeWithIngredients>() {
+	override suspend fun load(params: LoadParams<String>): LoadResult<String, RecipeWithIngredients> {
 		val currentKey = params.key
 		return try {
 			val response = service.getRecipes(
@@ -44,9 +43,9 @@ class EdamamPagingSource(
 		}
 	}
 
-	override fun getRefreshKey(state: PagingState<String, RecipeEntity>): String? {
+	override fun getRefreshKey(state: PagingState<String, RecipeWithIngredients>): String? {
 		return state.anchorPosition?.let { anchorPosition ->
-			state.closestItemToPosition(anchorPosition)?.pageId
+			state.closestItemToPosition(anchorPosition)?.recipe?.pageId
 		}
 	}
 

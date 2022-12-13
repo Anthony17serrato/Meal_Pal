@@ -37,4 +37,5 @@
     <string name="info_label">Info:</string>
     <string name="recipe_yield_label">Recipe Yield:</string>
     <string name="icon_save">Icon Save</string>
+    <string name="image_of_ingredient">Image of ingredient</string>
 </resources>

@@ -68,10 +68,10 @@ class DiscoverViewModel @Inject constructor(
 	private fun searchRepo(queryString: DiscoverQuery) : Flow<PagingData<DiscoverItemUiState>> =
 		recipeRepo.fetchRecipes(queryString)
 			.map { pagingData ->
-				pagingData.map { recipeEntity ->
+				pagingData.map { recipeWithIngredients ->
 					DiscoverItemUiState(
-						recipeListModel = recipeEntity.asRecipeListModel(),
-						onSelect = { recipeRepo.viewNonPersistedRecipe(recipeEntity) }
+						recipeListModel = recipeWithIngredients.recipe.asRecipeListModel(),
+						onSelect = { recipeRepo.viewNonPersistedRecipe(recipeWithIngredients) }
 					)
 				}
 			}

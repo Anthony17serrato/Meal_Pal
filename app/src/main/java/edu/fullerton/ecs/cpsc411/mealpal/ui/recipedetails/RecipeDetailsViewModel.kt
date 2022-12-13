@@ -2,15 +2,13 @@ package edu.fullerton.ecs.cpsc411.mealpal.ui.recipedetails
 
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.modules.DefaultDispatcher
 import edu.fullerton.ecs.cpsc411.mealpal.repos.RecipeRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -32,15 +30,20 @@ class RecipeDetailsViewModel @Inject constructor(
 	}
 
 	fun onSaveToggle() {
-		_recipeUiState.value.recipeEntity?.let { recipe ->
-			recipeRepo.saveToggleChannel.trySend(recipe.copy(isSaved = !recipe.isSaved))
+		// Todo: maybe create a simpler recipe model for the UI layer
+		_recipeUiState.value.recipeWithIngredients?.let { recipeWithIngredients ->
+			recipeRepo.saveToggleChannel.trySend(
+				recipeWithIngredients.copy(
+					recipe = recipeWithIngredients.recipe.copy(isSaved = !recipeWithIngredients.recipe.isSaved)
+				)
+			)
 		}
 	}
 
 	fun setRecipe(recipeUrl: String) = viewModelScope.launch {
 		recipeRepo.getRecipe(recipeUrl).collect { recipe ->
 			_recipeUiState.update { currentRecipeModel ->
-				currentRecipeModel.copy(recipeEntity = recipe)
+				currentRecipeModel.copy(recipeWithIngredients = recipe)
 			}
 		}
 	}
@@ -56,6 +59,6 @@ class RecipeDetailsViewModel @Inject constructor(
 }
 
 data class RecipeModel(
-	val recipeEntity: RecipeEntity? = null,
+	val recipeWithIngredients: RecipeWithIngredients? = null,
 	val palette: Palette? = null
 )

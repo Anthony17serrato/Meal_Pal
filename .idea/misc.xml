@@ -14,6 +14,7 @@
         <entry key="app/src/main/res/layout/fragment_discover.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_saved_meals.xml" value="0.4134963768115942" />
         <entry key="app/src/main/res/layout/fragment_search_recipe_dialog.xml" value="0.48020833333333335" />
+        <entry key="app/src/main/res/layout/item_ingredient.xml" value="0.33" />
         <entry key="app/src/main/res/layout/item_meal.xml" value="0.48020833333333335" />
         <entry key="app/src/main/res/layout/item_trend.xml" value="0.5635416666666667" />
         <entry key="app/src/main/res/layout/item_trend_meal.xml" value="0.447463768115942" />

@@ -17,13 +17,14 @@ import androidx.core.text.bold
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.ActivityRecipieDetailsBinding
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.utils.MEAL_URL
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -50,10 +51,10 @@ class RecipeDetailsActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     recipeDetailsViewModel.recipeUiState
-                        .map { it.recipeEntity }
+                        .map { it.recipeWithIngredients }
                         .distinctUntilChanged()
-                        .collect { recipe ->
-                            recipe?.let {
+                        .collect { recipeWithIngredients ->
+                            recipeWithIngredients?.let {
                                 displayRecipe(it)
                             }
                         }
@@ -71,7 +72,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
                                 if (isUsingNightModeResources()) {
                                     it.getLightVibrantColor(defaultLightColor).let { color ->
                                         binding.recipeTitle.setTextColor(color)
-                                        binding.tving.setTextColor(color)
+                                        binding.ingredientsLabel.setTextColor(color)
                                     }
                                     it.getDarkMutedColor(defaultDarkColor).let { color ->
                                         binding.cardsave.setCardBackgroundColor(ColorUtils.setAlphaComponent(color, 100))
@@ -92,7 +93,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
                                     }
                                     it.getDarkMutedColor(defaultDarkColor).let { color ->
                                         binding.recipeTitle.setTextColor(color)
-                                        binding.tving.setTextColor(color)
+                                        binding.ingredientsLabel.setTextColor(color)
                                     }
                                 }
                             }
@@ -111,13 +112,15 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayRecipe(recipeEntity: RecipeEntity) {
+    private fun displayRecipe(recipeWithIngredients: RecipeWithIngredients) {
+        val recipeEntity = recipeWithIngredients.recipe
         binding.saveIcon.setImageResource(if (recipeEntity.isSaved) R.drawable.ic_baseline_star_24 else R.drawable.ic_round_star_border_24)
-        var ingredients = ""
-        for(item in recipeEntity.ingredients){
-            ingredients += "\u25CF $item\n"
+
+        val ingredientsAdapter = IngredientsAdapter(recipeWithIngredients.ingredients)
+        binding.ingredientsRecycler.apply {
+            layoutManager = LinearLayoutManager(this@RecipeDetailsActivity)
+            adapter = ingredientsAdapter
         }
-        binding.ingredients.text = ingredients
         val joined = ArrayList<String>()
         joined.addAll(recipeEntity.dietLabels)
         joined.addAll(recipeEntity.healthLabels)
