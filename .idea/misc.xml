@@ -10,7 +10,7 @@
         <entry key="app/src/main/res/font/exo_bold.xml" value="0.35185185185185186" />
         <entry key="app/src/main/res/font/open_sans_bold.xml" value="0.35185185185185186" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="app/src/main/res/layout/activity_recipie_details.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_recipie_details.xml" value="0.67" />
         <entry key="app/src/main/res/layout/fragment_discover.xml" value="0.5" />
         <entry key="app/src/main/res/layout/fragment_saved_meals.xml" value="0.4134963768115942" />
         <entry key="app/src/main/res/layout/fragment_search_recipe_dialog.xml" value="0.48020833333333335" />
