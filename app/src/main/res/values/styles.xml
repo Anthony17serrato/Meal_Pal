@@ -1,9 +1,9 @@
 <resources>
-    <style name="CustomCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_corners</item>
+    <style name="SaveCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.BottomLeftRounded</item>
     </style>
 
-    <style name="ShapeAppearanceOverlay_card_custom_corners" parent="">
+    <style name="ShapeAppearance.BottomLeftRounded" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">0dp</item>
         <item name="cornerSizeTopLeft">0dp</item>
@@ -16,39 +16,16 @@
         <item name="cornerSize">16dp</item>
     </style>
 
-    <style name="bottomRoundedImage" parent="">
+    <style name="ShapeAppearance.BottomRounded" parent="">
         <item name="cornerFamilyBottomLeft">rounded</item>
         <item name="cornerFamilyBottomRight">rounded</item>
         <item name="cornerSize">12dp</item>
     </style>
 
-    <style name="endRoundedImage" parent="">
+    <style name="ShapeAppearance.EndRounded" parent="">
         <item name="cornerFamilyBottomRight">rounded</item>
         <item name="cornerFamilyTopRight">rounded</item>
         <item name="cornerSize">30dp</item>
-    </style>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-    <style name="AppTheme2" parent="Theme.MaterialComponents.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-    <style name="AppTheme2.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
@@ -58,6 +35,8 @@
     <style name="BaseBottomSheetDialog" parent="@style/Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
         <item name="bottomSheetStyle">@style/BottomSheet</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
     </style>
 
     <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog" />

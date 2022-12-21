@@ -27,7 +27,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/endRoundedImage"
+            app:shapeAppearanceOverlay="@style/ShapeAppearance.EndRounded"
             app:srcCompat="@drawable/default_ingredient_icon"
             tools:ignore="ImageContrastCheck" />
 

@@ -34,7 +34,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardsave"
-                style="@style/CustomCardViewStyle"
+                style="@style/SaveCardViewStyle"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_gravity="end"
