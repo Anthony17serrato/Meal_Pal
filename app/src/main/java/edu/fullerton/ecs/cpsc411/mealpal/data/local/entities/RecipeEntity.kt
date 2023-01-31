@@ -1,4 +1,4 @@
-package edu.fullerton.ecs.cpsc411.mealpal.db
+package edu.fullerton.ecs.cpsc411.mealpal.data.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Embedded
@@ -7,20 +7,20 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "recipe_table")
 data class RecipeEntity(
-	@PrimaryKey val url: String,
-	val pageId: String?,
-	val saveTime: Long = System.currentTimeMillis(),
-	val title: String,
-	val image: String,
-	@Embedded val images: Images,
-	val calories: Double = 0.0,
-	val yield: Double = 0.0,
-	@ColumnInfo(name = "diet_labels")
+    @PrimaryKey val url: String,
+    val pageId: String?,
+    val saveTime: Long = System.currentTimeMillis(),
+    val title: String,
+    val image: String,
+    @Embedded val images: Images,
+    val calories: Double = 0.0,
+    val yield: Double = 0.0,
+    @ColumnInfo(name = "diet_labels")
 	val dietLabels: List<String>,
-	@ColumnInfo(name = "health_labels")
+    @ColumnInfo(name = "health_labels")
 	val healthLabels: List<String>,
-	val cautions: List<String>,
-	@ColumnInfo(name = "is_saved")
+    val cautions: List<String>,
+    @ColumnInfo(name = "is_saved")
 	val isSaved: Boolean = false
 )
 

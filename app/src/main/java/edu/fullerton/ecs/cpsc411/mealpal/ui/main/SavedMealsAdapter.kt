@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import edu.fullerton.ecs.cpsc411.mealpal.R
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 
 class SavedMealsAdapter(private val onClick: (String) -> Unit) : ListAdapter<RecipeListModel, SavedMealsAdapter.RecipeViewHolder>(RecipeListModelDiffCallback) {
 

@@ -9,22 +9,23 @@
     <application
         android:name=".MealPalApplication"
         android:allowBackup="false"
-        tools:replace="android:allowBackup"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppTheme">
-        <activity android:name=".ui.recipedetails.RecipeDetailsActivity">
-
-        </activity>
-
+        android:theme="@style/Theme.AppTheme"
+        tools:replace="android:allowBackup">
+        <activity
+            android:name=".ui.onboarding.OnboardingActivity"
+            android:exported="false" />
+        <activity android:name=".ui.recipedetails.RecipeDetailsActivity" />
         <activity
             android:name=".ui.main.MainActivity"
-            android:label="@string/app_name"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

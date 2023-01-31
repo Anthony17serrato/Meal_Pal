@@ -1,10 +1,10 @@
-package edu.fullerton.ecs.cpsc411.mealpal.network
+package edu.fullerton.ecs.cpsc411.mealpal.data.network
 
 import com.squareup.moshi.Json
-import edu.fullerton.ecs.cpsc411.mealpal.db.Images
-import edu.fullerton.ecs.cpsc411.mealpal.db.IngredientEntity
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeEntity
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeWithIngredients
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.Images
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.IngredientEntity
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
 
 data class NetworkRecipe(
 	val url: String,

@@ -4,15 +4,16 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import androidx.savedstate.SavedStateRegistryOwner
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeListModel
-import edu.fullerton.ecs.cpsc411.mealpal.db.asRecipeListModel
-import edu.fullerton.ecs.cpsc411.mealpal.repos.RecipeRepository
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
 	private val recipeRepo: RecipeRepository,

@@ -1,10 +1,10 @@
-package edu.fullerton.ecs.cpsc411.mealpal.repos
+package edu.fullerton.ecs.cpsc411.mealpal.data.repository
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeWithIngredients
-import edu.fullerton.ecs.cpsc411.mealpal.network.EdamamService
-import edu.fullerton.ecs.cpsc411.mealpal.network.asEntityList
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
+import edu.fullerton.ecs.cpsc411.mealpal.data.network.EdamamService
+import edu.fullerton.ecs.cpsc411.mealpal.data.network.asEntityList
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 import okio.IOException
 import retrofit2.HttpException

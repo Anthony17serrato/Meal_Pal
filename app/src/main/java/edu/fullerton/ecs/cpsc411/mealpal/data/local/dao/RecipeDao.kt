@@ -1,6 +1,9 @@
-package edu.fullerton.ecs.cpsc411.mealpal.db
+package edu.fullerton.ecs.cpsc411.mealpal.data.local.dao
 
 import androidx.room.*
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeEntity
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
 import kotlinx.coroutines.flow.Flow
 
 @Dao

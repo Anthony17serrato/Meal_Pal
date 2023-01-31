@@ -1,10 +1,14 @@
-package edu.fullerton.ecs.cpsc411.mealpal.db
+package edu.fullerton.ecs.cpsc411.mealpal.data.local
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.dao.IngredientDao
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.dao.RecipeDao
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.IngredientEntity
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeEntity
 
 // Annotates class to be a Room Database with a table (entity) of the Word class
 @Database(entities = [RecipeEntity::class, IngredientEntity::class], version = 1, exportSchema = false)

@@ -1,12 +1,16 @@
-package edu.fullerton.ecs.cpsc411.mealpal.repos
+package edu.fullerton.ecs.cpsc411.mealpal.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.room.withTransaction
-import edu.fullerton.ecs.cpsc411.mealpal.db.*
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.MealPalDatabase
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.dao.IngredientDao
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.dao.RecipeDao
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.modules.ApplicationScope
-import edu.fullerton.ecs.cpsc411.mealpal.network.EdamamService
+import edu.fullerton.ecs.cpsc411.mealpal.data.network.EdamamService
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel

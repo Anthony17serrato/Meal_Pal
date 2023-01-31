@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.fullerton.ecs.cpsc411.mealpal.db.RecipeWithIngredients
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.modules.DefaultDispatcher
-import edu.fullerton.ecs.cpsc411.mealpal.repos.RecipeRepository
+import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

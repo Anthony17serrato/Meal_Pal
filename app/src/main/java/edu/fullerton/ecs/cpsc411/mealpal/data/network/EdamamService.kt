@@ -1,4 +1,4 @@
-package edu.fullerton.ecs.cpsc411.mealpal.network
+package edu.fullerton.ecs.cpsc411.mealpal.data.network
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

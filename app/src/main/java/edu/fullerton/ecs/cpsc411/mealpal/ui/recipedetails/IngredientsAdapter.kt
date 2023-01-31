@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import edu.fullerton.ecs.cpsc411.mealpal.R
-import edu.fullerton.ecs.cpsc411.mealpal.db.IngredientEntity
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.IngredientEntity
 
 // Since this is a static list there is no need for ListAdapter with DiffUtil
 class IngredientsAdapter(private val ingredientsList: List<IngredientEntity>) :

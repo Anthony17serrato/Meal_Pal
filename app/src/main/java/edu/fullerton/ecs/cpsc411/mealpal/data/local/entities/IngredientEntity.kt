@@ -1,4 +1,4 @@
-package edu.fullerton.ecs.cpsc411.mealpal.db
+package edu.fullerton.ecs.cpsc411.mealpal.data.local.entities
 
 import androidx.room.Entity
 
