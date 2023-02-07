@@ -92,4 +92,10 @@
     <string name="health_vegan">vegan</string>
     <string name="health_vegetarian">vegetarian</string>
     <string name="health_wheat_free">wheat-free</string>
+    <string name="diet_balanced">Balanced</string>
+    <string name="diet_high_fiber">High-Fiber</string>
+    <string name="diet_high_protein">High-Protein</string>
+    <string name="diet_low_carb">Low-Carb</string>
+    <string name="diet_low_fat">Low-Fat</string>
+    <string name="diet_low_sodium">Low-Sodium</string>
 </resources>

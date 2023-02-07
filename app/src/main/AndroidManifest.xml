@@ -20,7 +20,7 @@
             android:exported="false" />
         <activity android:name=".ui.recipedetails.RecipeDetailsActivity" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.main.HomeActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

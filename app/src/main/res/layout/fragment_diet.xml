@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chipGroup"
+        android:id="@+id/dietChipGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -51,50 +51,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/textView10"
         app:layout_constraintTop_toBottomOf="@+id/textView10">
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_balanced"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/balanced"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_high_fiber"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/high_fiber"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_high_protein"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/high_protein"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_low_carb"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/low_carb"
-            tools:ignore="TextContrastCheck" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_low_fat"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/low_fat"
-            tools:ignore="TextContrastCheck" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_low_sodium"
-            style="@style/Widget.Material3.Chip.Filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/low_sodium" />
 
     </com.google.android.material.chip.ChipGroup>
 

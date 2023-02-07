@@ -5,12 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.google.android.material.chip.Chip
+import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentHealthBinding
 import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 
+@AndroidEntryPoint
 class HealthFragment : Fragment() {
     private var _binding: FragmentHealthBinding? = null
     private val binding get() = _binding!!
@@ -30,7 +33,13 @@ class HealthFragment : Fragment() {
         HealthLabels.values().forEach { label ->
             binding.healthChipGroup.addView(createHealthChip(label))
         }
-
+        binding.healthChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            onboardingViewModel.updateSelectedHealthLabels(checkedIds)
+        }
+        binding.healthNextFab.setOnClickListener {
+            onboardingViewModel.saveHealthPreferencesAndCompleteOnboarding()
+            requireActivity().finish()
+        }
     }
 
     override fun onDestroyView() {
