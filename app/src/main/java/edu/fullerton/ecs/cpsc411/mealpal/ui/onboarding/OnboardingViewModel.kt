@@ -8,6 +8,7 @@ import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.round
 
@@ -28,9 +29,7 @@ class OnboardingViewModel @Inject constructor(
 
     fun updateSelectedDietLabels(checkedIds: List<Int>) {
         val selectedDietLabels = checkedIds.map {
-            // ordinals start with 0 while checked id's start with 1
-            val ordinal = it - 1
-            DietLabels.values()[ordinal]
+            DietLabels.values()[it]
         }
         _onboardingUiState.update {
             it.copy(selectedDietLabels = selectedDietLabels)
@@ -39,9 +38,7 @@ class OnboardingViewModel @Inject constructor(
 
     fun updateSelectedHealthLabels(checkedIds: List<Int>) {
         val selectedHealthLabels = checkedIds.map {
-            // ordinals start with 0 while checked id's start with 1
-            val ordinal = it - 1
-            HealthLabels.values()[ordinal]
+            HealthLabels.values()[it]
         }
         _onboardingUiState.update {
             it.copy(selectedHealthLabels = selectedHealthLabels)

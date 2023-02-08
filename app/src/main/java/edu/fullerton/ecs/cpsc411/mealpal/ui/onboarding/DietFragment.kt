@@ -52,6 +52,7 @@ class DietFragment : Fragment() {
         val chip = layoutInflater.inflate(R.layout.chip, binding.dietChipGroup, false) as Chip
         return chip.apply {
             text = getString(label.resId)
+            id = label.ordinal
         }
     }
 }
