@@ -6,6 +6,7 @@ import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredien
 import edu.fullerton.ecs.cpsc411.mealpal.data.network.EdamamService
 import edu.fullerton.ecs.cpsc411.mealpal.data.network.asEntityList
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
+import edu.fullerton.ecs.cpsc411.mealpal.utils.DEFAULT_QUERY
 import okio.IOException
 import retrofit2.HttpException
 import timber.log.Timber
@@ -18,11 +19,18 @@ class EdamamPagingSource(
 	override suspend fun load(params: LoadParams<String>): LoadResult<String, RecipeWithIngredients> {
 		val currentKey = params.key
 		return try {
-			val response = service.getRecipes(
-				keyword = query.keyword,
-				calories = "${query.calMin}-${query.calThresh}",
-				pageId = currentKey
-			)
+			val response = if (query == DEFAULT_QUERY) {
+				service.getDefaultRecipes(
+					pageId = currentKey
+				)
+			} else {
+				service.getRecipes(
+					keyword = query.keyword,
+					calories = "${query.calMin}-${query.calThresh}",
+					pageId = currentKey
+				)
+			}
+
 			Timber.i("Network response ${response.hits.size}")
 			val nextKey = response.links.nextPage?.url?.let { parseNextPageFromUrl(it) }
 			Timber.i("Next Key is: $nextKey")

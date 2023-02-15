@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
+import edu.fullerton.ecs.cpsc411.mealpal.utils.DEFAULT_QUERY
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -101,5 +102,4 @@ data class DiscoverItemUiState(
 )
 
 private const val LAST_SEARCH_QUERY: String = "last_search_query"
-private val DEFAULT_QUERY = DiscoverQuery()
 private const val LAST_QUERY_SCROLLED: String = "last_query_scrolled"

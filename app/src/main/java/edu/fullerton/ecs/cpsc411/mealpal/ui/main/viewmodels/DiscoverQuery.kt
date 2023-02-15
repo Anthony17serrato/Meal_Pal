@@ -5,8 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class DiscoverQuery(
-	val keyword: String = "Italian",
-	val calThresh: String = "800",
+	val keyword: String = "",
+	val calThresh: String = "1000",
 	val calMin: String = "200",
 	val hLabel: String? = null
 ) : Parcelable

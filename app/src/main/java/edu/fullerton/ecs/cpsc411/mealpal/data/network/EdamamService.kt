@@ -21,6 +21,16 @@ interface EdamamService {
 		@Query("_cont") pageId: String? = null
 	): RecipesResponse
 
+	@Headers("Accept: application/json")
+	@GET("v2?type=public")
+	suspend fun getDefaultRecipes(
+		@Query("_cont") pageId: String? = null,
+		@Query("app_id") id: String = BuildConfig.EDAMAM_ID,
+		@Query("app_key") key: String = BuildConfig.EDAMAM_KEY,
+		@Query("mealType") mealType: String = "Dinner",
+		@Query("dishType") dishType: String = "Main course"
+	): RecipesResponse
+
 //	@Headers("Accept: application/json")
 //	@GET("/search?q={keyword}&app_id=4c087af2&app_key=f7072010a971bf0c2012cfae655c7f6e&from=0&to=100&calories={minCalories}-{maxCalories}&health={healthLabels}")
 //   	suspend fun getRecipes(
