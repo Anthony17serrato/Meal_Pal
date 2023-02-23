@@ -98,4 +98,8 @@
     <string name="diet_low_carb">Low-Carb</string>
     <string name="diet_low_fat">Low-Fat</string>
     <string name="diet_low_sodium">Low-Sodium</string>
+    <string name="warning">Warning</string>
+    <string name="warning_description">This recipe does not adhere to the following dietary/health restrictions noted in your Meal Pal profile</string>
+    <string name="approved_recipe">Approved Recipe</string>
+    <string name="approved_description">This recipe adheres to all of the dietary and health restrictions noted in your Meal Pal profile.</string>
 </resources>

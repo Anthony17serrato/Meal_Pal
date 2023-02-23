@@ -30,15 +30,26 @@ class HealthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onboardingViewModel.setProgress(screenNumber = 3)
-        HealthLabels.values().forEach { label ->
-            binding.healthChipGroup.addView(createHealthChip(label))
-        }
-        binding.healthChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
-            onboardingViewModel.updateSelectedHealthLabels(checkedIds)
-        }
-        binding.healthNextFab.setOnClickListener {
+
+        binding.bindUi()
+    }
+
+    private fun FragmentHealthBinding.bindUi() {
+        fun completeOnboarding() {
             onboardingViewModel.saveHealthPreferencesAndCompleteOnboarding()
             requireActivity().finish()
+        }
+        HealthLabels.values().forEach { label ->
+            healthChipGroup.addView(createHealthChip(label))
+        }
+        healthChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            onboardingViewModel.updateSelectedHealthLabels(checkedIds)
+        }
+        healthNextFab.setOnClickListener {
+            completeOnboarding()
+        }
+        skipButtonHealth.setOnClickListener {
+            completeOnboarding()
         }
     }
 

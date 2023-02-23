@@ -2,6 +2,7 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:animateLayoutChanges="true"
     android:id="@+id/recipe_scroll_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -30,6 +31,7 @@
                 android:adjustViewBounds="false"
                 android:contentDescription="@string/image_of_the_recipe_helper"
                 android:scaleType="centerCrop"
+                tools:ignore="ImageContrastCheck"
                 tools:srcCompat="@tools:sample/avatars" />
 
             <com.google.android.material.card.MaterialCardView
@@ -135,21 +137,82 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageView4" />
 
-                <TextView
-                    android:id="@+id/info"
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/user_interactions"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="@string/info_label"
-                    android:textSize="18sp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="@color/card_warning"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/yield" />
+                    app:layout_constraintTop_toBottomOf="@+id/yield"
+                    app:strokeWidth="0dp">
 
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingStart="8dp"
+                        android:paddingTop="8dp"
+                        android:paddingEnd="8dp"
+                        android:paddingBottom="16dp">
 
+                        <ImageView
+                            android:id="@+id/interaction_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:importantForAccessibility="no"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:tint="@android:color/white"
+                            tools:srcCompat="@drawable/round_warning_24" />
+
+                        <TextView
+                            android:id="@+id/interaction_label"
+                            style="@style/TextAppearance.Material3.TitleMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginEnd="8dp"
+                            android:textColor="@android:color/white"
+                            app:layout_constraintBottom_toBottomOf="@+id/interaction_icon"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@+id/interaction_icon"
+                            app:layout_constraintTop_toTopOf="@+id/interaction_icon"
+                            tools:text="Interaction Label" />
+
+                        <TextView
+                            android:id="@+id/interaction_description"
+                            style="@style/TextAppearance.Material3.BodyMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@android:color/white"
+                            app:layout_constraintEnd_toEndOf="@+id/interaction_label"
+                            app:layout_constraintStart_toStartOf="@+id/interaction_label"
+                            app:layout_constraintTop_toBottomOf="@+id/interaction_label"
+                            tools:text="Some positive or negative interaction description" />
+
+                        <TextView
+                            android:id="@+id/interactionViolations"
+                            style="@style/TextAppearance.Material3.TitleMedium"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textColor="@android:color/white"
+                            android:textStyle="bold"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/interaction_description"
+                            app:layout_constraintStart_toStartOf="@+id/interaction_description"
+                            app:layout_constraintTop_toBottomOf="@+id/interaction_description"
+                            tools:text="Optional health restriction violations list"
+                            tools:visibility="visible" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 

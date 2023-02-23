@@ -37,10 +37,22 @@ class PreferencesRepository @Inject constructor(
         }
     }
 
+    suspend fun getDietPreferences() : List<DietLabels> {
+        return dataStore.data.map { preferences ->
+            preferences[DIET_PREFS]?.toDietLabels() ?: emptyList()
+        }.first()
+    }
+
     fun saveHealthPreferences(selectedHealthLabels: List<HealthLabels>) = scope.launch {
         dataStore.edit { preferences ->
             preferences[HEALTH_PREFS] = selectedHealthLabels.toStringSet()
         }
+    }
+
+    suspend fun getHealthPreferences() : List<HealthLabels> {
+        return dataStore.data.map { preferences ->
+            preferences[HEALTH_PREFS]?.toHealthLabels() ?: emptyList()
+        }.first()
     }
 
     private fun <T : Enum<T>> List<Enum<T>>.toStringSet() = this.map { it.name }.toSet()

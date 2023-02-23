@@ -35,45 +35,25 @@ class HomeActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+
+        fun showBottomSearchSheet() {
+            val modalBottomSheet = SearchRecipeDialogFragment()
+            modalBottomSheet.show(supportFragmentManager, SearchRecipeDialogFragment.TAG)
+        }
         binding.bottomNavigation.setupWithNavController(navController)
         binding.appBarLayout.setBackgroundColor(getColorFromAttr(R.attr.colorSurface))
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_search -> {
-                    val newFragment: BottomSheetDialogFragment= SearchRecipeDialogFragment()
+                    showBottomSearchSheet()
 
-                    val ft =
-                        supportFragmentManager.beginTransaction()
-                    val prev =
-                        supportFragmentManager.findFragmentById(R.id.dialog)
-                    if (prev != null) {
-                        ft.remove(prev)
-                    }
-                    // save transaction to the back stack
-                    // save transaction to the back stack
-                    ft.addToBackStack("dialog")
-                    newFragment.show(ft, "dialog")
-                    supportFragmentManager.executePendingTransactions()
                     true
                 }
                 else -> { true }
             }
         }
         binding.searchBar.setOnClickListener {
-            val newFragment: BottomSheetDialogFragment= SearchRecipeDialogFragment()
-
-            val ft =
-                supportFragmentManager.beginTransaction()
-            val prev =
-                supportFragmentManager.findFragmentById(R.id.dialog)
-            if (prev != null) {
-                ft.remove(prev)
-            }
-            // save transaction to the back stack
-            // save transaction to the back stack
-            ft.addToBackStack("dialog")
-            newFragment.show(ft, "dialog")
-            supportFragmentManager.executePendingTransactions()
+            showBottomSearchSheet()
         }
         launchOnboardingIfRequired()
     }

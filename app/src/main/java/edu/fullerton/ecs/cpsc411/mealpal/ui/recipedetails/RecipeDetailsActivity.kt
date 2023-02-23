@@ -4,12 +4,15 @@ import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
@@ -25,8 +28,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.ActivityRecipieDetailsBinding
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
+import edu.fullerton.ecs.cpsc411.mealpal.use_case.RecipeInteraction
 import edu.fullerton.ecs.cpsc411.mealpal.utils.MEAL_URL
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -56,6 +61,35 @@ class RecipeDetailsActivity : AppCompatActivity() {
                         .collect { recipeWithIngredients ->
                             recipeWithIngredients?.let {
                                 displayRecipe(it)
+                            }
+                        }
+                }
+                launch {
+                    recipeDetailsViewModel.recipeUiState
+                        .map { it.recipeInteractions }
+                        .distinctUntilChanged()
+                        .filterNotNull()
+                        .collect {
+                            binding.userInteractions.setCardBackgroundColor(
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    resources.getColor(it.cardColor, null)
+                                } else {
+                                    resources.getColor(it.cardColor)
+                                }
+                            )
+                            binding.interactionLabel.text = getString(it.interactionLabel)
+                            binding.interactionIcon.setImageDrawable(
+                                AppCompatResources.getDrawable(baseContext, it.interactionIcon)
+                            )
+                            binding.interactionDescription.text = getString(it.interactionDescription)
+                            when (it) {
+                                RecipeInteraction.Approved -> binding.interactionViolations.visibility = View.GONE
+                                is RecipeInteraction.Warning -> {
+                                    binding.interactionViolations.apply {
+                                        visibility = View.VISIBLE
+                                        text = it.conflicts
+                                    }
+                                }
                             }
                         }
                 }
@@ -129,10 +163,6 @@ class RecipeDetailsActivity : AppCompatActivity() {
         for (item in joined) {
             info += "$item, "
         }
-        val infoSpannable = SpannableStringBuilder().bold {
-            append(getString(R.string.info_tag))
-        }.append(info)
-        binding.info.setText(infoSpannable, TextView.BufferType.SPANNABLE)
         val yieldSpannable = SpannableStringBuilder().bold {
             append(getString(R.string.yield_tag))
         }.append(recipeEntity.yield.toInt().toString())

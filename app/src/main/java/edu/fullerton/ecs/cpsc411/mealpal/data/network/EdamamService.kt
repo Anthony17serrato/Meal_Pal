@@ -28,7 +28,8 @@ interface EdamamService {
 		@Query("app_id") id: String = BuildConfig.EDAMAM_ID,
 		@Query("app_key") key: String = BuildConfig.EDAMAM_KEY,
 		@Query("mealType") mealType: String = "Dinner",
-		@Query("dishType") dishType: String = "Main course"
+		@Query("dishType") dishType: String = "Main course",
+		@Query("diet") diet: String = "balanced"
 	): RecipesResponse
 
 //	@Headers("Accept: application/json")

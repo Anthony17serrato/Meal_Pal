@@ -30,15 +30,26 @@ class DietFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         onboardingViewModel.setProgress(screenNumber = 2)
-        binding.floatingActionButton.setOnClickListener {
-            onboardingViewModel.saveDietPreferences()
+
+        binding.bindUi()
+    }
+
+    private fun FragmentDietBinding.bindUi() {
+        fun navigateNextFragment() {
             val action = DietFragmentDirections.actionDietFragmentToHealthFragment()
             findNavController().navigate(action)
         }
-        DietLabels.values().forEach { label ->
-            binding.dietChipGroup.addView(createDietChip(label))
+        floatingActionButton.setOnClickListener {
+            onboardingViewModel.saveDietPreferences()
+            navigateNextFragment()
         }
-        binding.dietChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+        skipDietButton.setOnClickListener {
+            navigateNextFragment()
+        }
+        DietLabels.values().forEach { label ->
+            dietChipGroup.addView(createDietChip(label))
+        }
+        dietChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             onboardingViewModel.updateSelectedDietLabels(checkedIds)
         }
     }

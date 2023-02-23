@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import edu.fullerton.ecs.cpsc411.mealpal.MealPalApplication
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentSearchRecipeDialogBinding
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.*
@@ -27,12 +26,11 @@ class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val discoverViewModel: DiscoverViewModel by activityViewModels()
 
-    override fun getTheme(): Int = R.style.BottomSheetDialogTheme
-
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog = BottomSheetDialog(requireContext(), theme)
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentSearchRecipeDialogBinding.inflate(inflater, container, false)
@@ -91,6 +89,7 @@ class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
+        const val TAG = "ModalBottomSheet"
         private val dLabels = listOf("Balanced", "High-Fiber", "High-Protein", "Low-Carb","Low-Fat","Low-Sodium")
         private val hLabels = listOf("Alcohol-free","Celery-free","Crustacean-free","Dairy-free","Egg-free","Fish-free","Gluten-free","Keto","Kidney friendly","Kosher","Low potassium","Lupine-free","Mustard-free","No oil added","No-sugar","Paleo","Peanut-free","Pescatarian","Pork-free","Red meat-free","Sesame-free","Shelfish-free","Soy-free","Sugar-conscious","Tree-Nut-free","Vegan","Vegetarian","Wheat-free")
     }
