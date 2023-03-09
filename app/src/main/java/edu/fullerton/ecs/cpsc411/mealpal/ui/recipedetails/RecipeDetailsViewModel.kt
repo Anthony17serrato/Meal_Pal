@@ -1,19 +1,15 @@
 package edu.fullerton.ecs.cpsc411.mealpal.ui.recipedetails
 
 import android.graphics.Bitmap
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import dagger.hilt.android.lifecycle.HiltViewModel
-import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.modules.DefaultDispatcher
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
-import edu.fullerton.ecs.cpsc411.mealpal.use_case.RecipeInteraction
-import edu.fullerton.ecs.cpsc411.mealpal.use_case.RecipeInteractionsUseCase
+import edu.fullerton.ecs.cpsc411.mealpal.usecase.RecipeInteraction
+import edu.fullerton.ecs.cpsc411.mealpal.usecase.RecipeInteractionsUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,7 +48,10 @@ class RecipeDetailsViewModel @Inject constructor(
 			_recipeUiState.update { currentRecipeModel ->
 				currentRecipeModel.copy(recipeWithIngredients = recipe)
 			}
-			val interactions = recipeInteractionsUseCase.getInteractions(recipe.recipe)
+			val interactions = recipeInteractionsUseCase.getInteractions(
+				dietLabels = recipe.recipe.dietLabels,
+				healthLabels = recipe.recipe.healthLabels
+			)
 			_recipeUiState.update { it.copy(recipeInteractions = interactions) }
 		}
 	}

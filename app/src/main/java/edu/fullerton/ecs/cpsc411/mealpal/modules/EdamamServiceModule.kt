@@ -9,21 +9,26 @@ import dagger.hilt.components.SingletonComponent
 import edu.fullerton.ecs.cpsc411.mealpal.data.network.EdamamService
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object EdamamServiceModule {
     private const val BASE_URL = "https://api.edamam.com/api/recipes/"
+    private val moshi = Moshi.Builder()
+        .add(KotlinJsonAdapterFactory())
+        .build()
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .addConverterFactory(MoshiConverterFactory.create(moshi))
+        .baseUrl(BASE_URL)
+        .build()
+    private val retrofitService: EdamamService by lazy {
+        retrofit.create(EdamamService::class.java)
+    }
 
+    @Singleton
     @Provides
     fun provideEdamamService(): EdamamService {
-        val moshi = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .build()
-            .create(EdamamService::class.java)
+        return retrofitService
     }
 }

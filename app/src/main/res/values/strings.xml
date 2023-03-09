@@ -9,7 +9,7 @@
     <string name="recipe_image">Recipe Image</string>
     <string name="calories_icon">Calories Icon</string>
     <string name="button_view_recipe">View Recipe</string>
-    <string name="calories_indicator">%1$s Calories/Serving</string>
+    <string name="calories_indicator">%1$s Cal./Serving</string>
     <string name="min_calories_label">Min Cal. %1$s</string>
     <string name="max_calories_label">Max Cal. %1$s</string>
     <string name="info_tag">"Info: "</string>
@@ -102,4 +102,8 @@
     <string name="warning_description">This recipe does not adhere to the following dietary/health restrictions noted in your Meal Pal profile</string>
     <string name="approved_recipe">Approved Recipe</string>
     <string name="approved_description">This recipe adheres to all of the dietary and health restrictions noted in your Meal Pal profile.</string>
+    <string name="keyword_helper">Enter a what you have eaten, like \"coffee and croissant\" or \"chicken enchilada\"</string>
+    <string name="range_helper">Select a range of calories</string>
+    <string name="none_selection_option">None</string>
+    <string name="interaction_icon">Interaction Icon</string>
 </resources>

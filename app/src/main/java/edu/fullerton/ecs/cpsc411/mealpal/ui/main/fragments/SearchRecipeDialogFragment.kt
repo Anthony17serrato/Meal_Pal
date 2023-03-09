@@ -15,11 +15,14 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentSearchRecipeDialogBinding
+import edu.fullerton.ecs.cpsc411.mealpal.shared.DietLabels
+import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.*
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import java.util.Collections
 
 class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentSearchRecipeDialogBinding? = null
@@ -56,32 +59,48 @@ class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
                     .collect(editTextKeyword::setText)
             }
         }
-        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(this@SearchRecipeDialogFragment.requireContext(), android.R.layout.select_dialog_item, dLabels)
+        val dietLabelsAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this@SearchRecipeDialogFragment.requireContext(),
+            android.R.layout.select_dialog_item,
+            listOf(getString(R.string.none_selection_option)) + DietLabels.values().map { getString(it.resId) }
+        )
         editTextDietLabels.apply {
-            setAdapter(adapter)
+            setAdapter(dietLabelsAdapter)
             inputType = InputType.TYPE_NULL
         }
 
-        val adapterHealth: ArrayAdapter<String> = ArrayAdapter<String>(this@SearchRecipeDialogFragment.requireContext(), android.R.layout.select_dialog_item, hLabels)
+        val healthLabelsAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this@SearchRecipeDialogFragment.requireContext(),
+            android.R.layout.select_dialog_item,
+            listOf(getString(R.string.none_selection_option)) + HealthLabels.values().map { getString(it.resId) }
+        )
         editTextHealthLabels.apply {
-            setAdapter(adapterHealth)
+            setAdapter(healthLabelsAdapter)
             inputType = InputType.TYPE_NULL
         }
 
-        calorieRangeSeekbar.apply {
-            setMinStartValue(200f).setMaxStartValue(1800f).apply()
-
-            setOnRangeSeekbarChangeListener { minValue, maxValue ->
-                textMin1.text = getString(R.string.min_calories_label, minValue.toString())
-                textMax1.text = getString(R.string.max_calories_label, maxValue.toString())
-            }
-        }
+        // TODO use if needed to store range in viewmodel(persists last entered calorie range)
+//        rangeSlider.addOnChangeListener { rangeSlider, value, fromUser ->
+//            Timber.i("${rangeSlider.activeThumbIndex}, $value, $fromUser")
+//            // Responds to when slider's value is changed
+//        }
 
         buttonApply.setOnClickListener {
+            val minMax: Pair<Int, Int> = rangeSlider.values.let {
+                Pair(Collections.min(it).toInt(), Collections.max(it).toInt())
+            }
             // TODO: Build the entire query not just keyword
-            editTextKeyword.text.trim().let {
+            editTextKeyword.text?.trim()?.let {
                 if (it.isNotEmpty()) {
-                    onQueryChanged(UiAction.Search(query = DiscoverQuery(keyword = it.toString())))
+                    onQueryChanged(
+                        UiAction.Search(
+                            query = DiscoverQuery(
+                                keyword = it.toString(),
+                                calMin = minMax.first.toString(),
+                                calThresh = minMax.second.toString()
+                            )
+                        )
+                    )
                 }
             }
             dismiss()
@@ -90,7 +109,5 @@ class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "ModalBottomSheet"
-        private val dLabels = listOf("Balanced", "High-Fiber", "High-Protein", "Low-Carb","Low-Fat","Low-Sodium")
-        private val hLabels = listOf("Alcohol-free","Celery-free","Crustacean-free","Dairy-free","Egg-free","Fish-free","Gluten-free","Keto","Kidney friendly","Kosher","Low potassium","Lupine-free","Mustard-free","No oil added","No-sugar","Paleo","Peanut-free","Pescatarian","Pork-free","Red meat-free","Sesame-free","Shelfish-free","Soy-free","Sugar-conscious","Tree-Nut-free","Vegan","Vegetarian","Wheat-free")
     }
 }

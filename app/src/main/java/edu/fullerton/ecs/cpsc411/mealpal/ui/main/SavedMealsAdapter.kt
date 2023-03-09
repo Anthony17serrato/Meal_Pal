@@ -6,18 +6,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import edu.fullerton.ecs.cpsc411.mealpal.R
-import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.RecipeWithInteractions
 
-class SavedMealsAdapter(private val onClick: (String) -> Unit) : ListAdapter<RecipeListModel, SavedMealsAdapter.RecipeViewHolder>(RecipeListModelDiffCallback) {
+class SavedMealsAdapter(private val onClick: (String) -> Unit) : ListAdapter<RecipeWithInteractions, SavedMealsAdapter.RecipeViewHolder>(RecipeListModelDiffCallback) {
 
 	class RecipeViewHolder(itemView: View, val onClick: (String) -> Unit) : RecyclerView.ViewHolder(itemView) {
 		private val mealTitle: TextView = itemView.findViewById(R.id.meal_title)
 		private val calories: TextView = itemView.findViewById(R.id.caloriespreview)
-		private val mealInfo: TextView = itemView.findViewById(R.id.textView2)
+		private val interactionText: TextView = itemView.findViewById(R.id.interactionText)
+		private val interactionImage: ImageView = itemView.findViewById(R.id.interactionIcon)
+		private val interactionCard: CardView = itemView.findViewById(R.id.interactionCard)
 		private val mealImage: ImageView = itemView.findViewById(R.id.meal_img)
 		private var url: String? = null
 
@@ -30,22 +35,31 @@ class SavedMealsAdapter(private val onClick: (String) -> Unit) : ListAdapter<Rec
 		}
 
 		/* Bind recipe data. */
-		fun bind(recipe: RecipeListModel) {
-			url = recipe.url
-			mealTitle.text = recipe.title
-			calories.text = itemView.context.getString(R.string.calories_indicator, recipe.calories.toInt().toString())
-			Glide.with(mealImage.context).load(recipe.image).into(mealImage)
-
-			val joined = ArrayList<String>()
-			joined.addAll(recipe.dietLabels)
-			joined.addAll(recipe.healthLabels)
-			joined.addAll(recipe.cautions)
-			var info = "Info: "
-			for (item in joined){
-				info += "$item, "
+		fun bind(recipeWithInteractions: RecipeWithInteractions) {
+			val localContext = itemView.context
+			recipeWithInteractions.recipe.let { recipe ->
+				url = recipe.url
+				mealTitle.text = recipe.title
+				calories.text = itemView.context.getString(R.string.calories_indicator, recipe.calories.toInt().toString())
+				Glide.with(mealImage.context).load(recipe.image).into(mealImage)
 			}
-			info = info.substring(0,info.length-2)
-			mealInfo.text = info
+			recipeWithInteractions.interactions.let {recipeInteractions ->
+				interactionText.apply {
+					text = localContext.getString(recipeInteractions.interactionLabel)
+				}
+				interactionImage.apply {
+					setImageDrawable(
+						AppCompatResources.getDrawable(
+							localContext,
+							recipeInteractions.interactionIcon
+						)
+					)
+				}
+				interactionCard.setCardBackgroundColor(
+					ContextCompat.getColor(localContext, recipeInteractions.cardColor)
+				)
+			}
+
 		}
 	}
 
@@ -63,12 +77,12 @@ class SavedMealsAdapter(private val onClick: (String) -> Unit) : ListAdapter<Rec
 	}
 }
 
-object RecipeListModelDiffCallback : DiffUtil.ItemCallback<RecipeListModel>() {
-	override fun areItemsTheSame(oldItem: RecipeListModel, newItem: RecipeListModel): Boolean {
+object RecipeListModelDiffCallback : DiffUtil.ItemCallback<RecipeWithInteractions>() {
+	override fun areItemsTheSame(oldItem: RecipeWithInteractions, newItem: RecipeWithInteractions): Boolean {
 		return oldItem == newItem
 	}
 
-	override fun areContentsTheSame(oldItem: RecipeListModel, newItem: RecipeListModel): Boolean {
-		return oldItem.saveTime == newItem.saveTime
+	override fun areContentsTheSame(oldItem: RecipeWithInteractions, newItem: RecipeWithInteractions): Boolean {
+		return oldItem.recipe.saveTime == newItem.recipe.saveTime
 	}
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="initial_calories_slider_values">
+        <item>200</item>
+        <item>1800</item>
+    </array>
+</resources>

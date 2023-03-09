@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.ActivityRecipieDetailsBinding
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
-import edu.fullerton.ecs.cpsc411.mealpal.use_case.RecipeInteraction
+import edu.fullerton.ecs.cpsc411.mealpal.usecase.RecipeInteraction
 import edu.fullerton.ecs.cpsc411.mealpal.utils.MEAL_URL
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull

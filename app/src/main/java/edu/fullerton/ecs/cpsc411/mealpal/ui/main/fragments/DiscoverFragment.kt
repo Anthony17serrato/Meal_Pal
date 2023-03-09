@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
-import edu.fullerton.ecs.cpsc411.mealpal.*
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentDiscoverBinding
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.DiscoverAdapter
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.RecipeListModelLoadStateAdapter
@@ -134,7 +133,7 @@ class DiscoverFragment : Fragment() {
                         errorState?.let {
                             Toast.makeText(
                                 this@DiscoverFragment.context,
-                                "\uD83D\uDE28 Wooops ${it.error}",
+                                "\uD83D\uDE28 Whoops ${it.error}",
                                 Toast.LENGTH_LONG
                             ).show()
                         }

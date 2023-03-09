@@ -8,6 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
+import edu.fullerton.ecs.cpsc411.mealpal.usecase.RecipeInteraction
+import edu.fullerton.ecs.cpsc411.mealpal.usecase.RecipeInteractionsUseCase
 import edu.fullerton.ecs.cpsc411.mealpal.utils.DEFAULT_QUERY
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -18,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DiscoverViewModel @Inject constructor(
 	private val recipeRepo: RecipeRepository,
+	private val recipeInteractionsUseCase: RecipeInteractionsUseCase,
 	private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 	val discoverUiState: StateFlow<DiscoverUiState>
@@ -71,8 +74,13 @@ class DiscoverViewModel @Inject constructor(
 		recipeRepo.fetchRecipes(queryString)
 			.map { pagingData ->
 				pagingData.map { recipeWithIngredients ->
+					val recipeListModel = recipeWithIngredients.recipe.asRecipeListModel()
 					DiscoverItemUiState(
-						recipeListModel = recipeWithIngredients.recipe.asRecipeListModel(),
+						recipeListModel = recipeListModel,
+						recipeInteractions = recipeInteractionsUseCase.getInteractions(
+							dietLabels = recipeListModel.dietLabels,
+							healthLabels = recipeListModel.healthLabels
+						),
 						onSelect = { recipeRepo.viewNonPersistedRecipe(recipeWithIngredients) }
 					)
 				}
@@ -98,6 +106,7 @@ data class DiscoverUiState(
 
 data class DiscoverItemUiState(
 	val recipeListModel: RecipeListModel,
+	val recipeInteractions: RecipeInteraction,
 	val onSelect: () -> Unit
 )
 

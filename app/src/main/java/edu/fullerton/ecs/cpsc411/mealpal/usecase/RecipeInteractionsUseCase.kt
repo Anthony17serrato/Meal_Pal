@@ -1,4 +1,4 @@
-package edu.fullerton.ecs.cpsc411.mealpal.use_case
+package edu.fullerton.ecs.cpsc411.mealpal.usecase
 
 import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
@@ -7,16 +7,21 @@ import dagger.hilt.android.scopes.ViewModelScoped
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeEntity
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.PreferencesRepository
+import edu.fullerton.ecs.cpsc411.mealpal.shared.DietLabels
+import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 import javax.inject.Inject
 
 @ViewModelScoped
 class RecipeInteractionsUseCase @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) {
-    suspend fun getInteractions(recipe: RecipeEntity): RecipeInteraction {
+    suspend fun getInteractions(
+        dietLabels: List<String>,
+        healthLabels: List<String>
+    ): RecipeInteraction {
         val userPrefs = preferencesRepository.getDietPreferences().map { it.apiValue } +
                 preferencesRepository.getHealthPreferences().map { it.apiValue }
-        val recipeLabels = (recipe.dietLabels + recipe.healthLabels).map { it.lowercase() }
+        val recipeLabels = (dietLabels + healthLabels).map { it.lowercase() }
         val conflicts = userPrefs.subtract(recipeLabels.toSet())
         return if (conflicts.isEmpty()) RecipeInteraction.Approved
         else RecipeInteraction.Warning(

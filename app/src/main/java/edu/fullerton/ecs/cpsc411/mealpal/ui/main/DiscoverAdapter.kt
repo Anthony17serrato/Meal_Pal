@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,12 +24,15 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 	class RecipeViewHolder(itemView: View, val onClick: (String) -> Unit) : RecyclerView.ViewHolder(itemView) {
 		private val mealTitle: TextView = itemView.findViewById(R.id.meal_title)
 		private val calories: TextView = itemView.findViewById(R.id.caloriespreview)
-		private val mealInfo: TextView = itemView.findViewById(R.id.textView2)
+		private val interactionText: TextView = itemView.findViewById(R.id.interactionText)
+		private val interactionImage: ImageView = itemView.findViewById(R.id.interactionIcon)
+		private val interactionCard: CardView = itemView.findViewById(R.id.interactionCard)
 		private val mealImage: ImageView = itemView.findViewById(R.id.meal_img)
 		private var url: String? = null
 
 		/* Bind recipe data. */
 		fun bind(discoverItem: DiscoverItemUiState) {
+			val localContext = itemView.context
 			itemView.setOnClickListener {
 				discoverItem.onSelect()
 				url?.let {
@@ -36,19 +42,22 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 			discoverItem.recipeListModel.let { recipe ->
 				url = recipe.url
 				mealTitle.text = recipe.title
-				calories.text = itemView.context.getString(R.string.calories_indicator, recipe.calories.toInt().toString())
+				calories.text = localContext.getString(R.string.calories_indicator, recipe.calories.toInt().toString())
 				Glide.with(mealImage.context).load(recipe.image).into(mealImage)
-
-				val joined = ArrayList<String>()
-				joined.addAll(recipe.dietLabels)
-				joined.addAll(recipe.healthLabels)
-				joined.addAll(recipe.cautions)
-				var info = "Info: "
-				for (item in joined){
-					info += "$item, "
+				interactionText.apply {
+					text = localContext.getString(discoverItem.recipeInteractions.interactionLabel)
 				}
-				info = info.substring(0,info.length-2)
-				mealInfo.text = info
+				interactionImage.apply {
+					setImageDrawable(
+						AppCompatResources.getDrawable(
+							localContext,
+							discoverItem.recipeInteractions.interactionIcon
+						)
+					)
+				}
+				interactionCard.setCardBackgroundColor(
+					ContextCompat.getColor(localContext, discoverItem.recipeInteractions.cardColor)
+				)
 			}
 		}
 	}
