@@ -27,6 +27,8 @@ class EdamamPagingSource(
 				service.getRecipes(
 					keyword = query.keyword,
 					calories = "${query.calMin}-${query.calThresh}",
+					healthLabels = query.healthLabels,
+					dietLabels = query.dietLabels,
 					pageId = currentKey
 				)
 			}

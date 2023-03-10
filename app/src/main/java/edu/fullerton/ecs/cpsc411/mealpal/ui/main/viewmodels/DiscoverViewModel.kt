@@ -8,12 +8,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
+import edu.fullerton.ecs.cpsc411.mealpal.shared.DietLabels
+import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 import edu.fullerton.ecs.cpsc411.mealpal.usecase.RecipeInteraction
 import edu.fullerton.ecs.cpsc411.mealpal.usecase.RecipeInteractionsUseCase
 import edu.fullerton.ecs.cpsc411.mealpal.utils.DEFAULT_QUERY
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -23,6 +26,8 @@ class DiscoverViewModel @Inject constructor(
 	private val recipeInteractionsUseCase: RecipeInteractionsUseCase,
 	private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+	private val _discoverSearchState = MutableStateFlow(DiscoverSearchState())
+	val discoverSearchState = _discoverSearchState.asStateFlow()
 	val discoverUiState: StateFlow<DiscoverUiState>
 	val pagingDataFlow: Flow<PagingData<DiscoverItemUiState>>
 	val accept: (UiAction) -> Unit
@@ -91,6 +96,67 @@ class DiscoverViewModel @Inject constructor(
 		savedStateHandle[LAST_QUERY_SCROLLED] = discoverUiState.value.lastQueryScrolled
 		super.onCleared()
 	}
+
+	fun indexLocalizedHealthLabels(localizedString: String, healthLabel: HealthLabels) {
+		_discoverSearchState.update {
+			it.copy(healthLabelsIndex = it.healthLabelsIndex + listOf(Pair(localizedString, healthLabel)))
+		}
+	}
+
+	fun indexLocalizedDietLabels(localizedString: String, dietLabel: DietLabels) {
+		_discoverSearchState.update {
+			it.copy(dietLabelsIndex = it.dietLabelsIndex + listOf(Pair(localizedString, dietLabel)))
+		}
+	}
+
+	fun updateCurrentKeyword(keyword: CharSequence?) {
+		val sanitizedKeyword = keyword?.trim() ?: return
+		_discoverSearchState.update {
+			it.copy(currentKeyword = sanitizedKeyword.toString())
+		}
+	}
+
+	fun setMaxCalories(value: Float) {
+		_discoverSearchState.update {
+			it.copy(maxCalories = value.toInt().toString())
+		}
+	}
+
+	fun setMinCalories(value: Float) {
+		_discoverSearchState.update {
+			it.copy(minCalories = value.toInt().toString())
+		}
+	}
+
+	fun executeSearch() {
+		_discoverSearchState.value.apply {
+			if (currentKeyword.isNotEmpty()) {
+				accept(
+					UiAction.Search(
+						query = DiscoverQuery(
+							keyword = currentKeyword,
+							calMin = minCalories,
+							calThresh = maxCalories,
+							healthLabels = selectedHealthLabels.map { it.apiValue },
+							dietLabels = selectedDietLabels.map { it.apiValue }
+						).apply { Timber.i("$this") }
+					)
+				)
+			}
+		}
+	}
+
+	fun setHealthLabel(label: CharSequence?) {
+		val selectedHealthLabel = _discoverSearchState.value.healthLabelsIndex
+			.find { it.first == label?.trim().toString() }?.second ?: return
+		_discoverSearchState.update { it.copy(selectedHealthLabels = listOf(selectedHealthLabel)) }
+	}
+
+	fun setDietLabel(label: CharSequence?) {
+		val selectedDietLabel = _discoverSearchState.value.dietLabelsIndex
+			.find { it.first == label?.trim().toString() }?.second ?:return
+		_discoverSearchState.update { it.copy(selectedDietLabels = listOf(selectedDietLabel)) }
+	}
 }
 
 sealed class UiAction {
@@ -102,6 +168,16 @@ data class DiscoverUiState(
 	val query: DiscoverQuery = DiscoverQuery(),
 	val lastQueryScrolled: DiscoverQuery = DiscoverQuery(),
 	val hasNotScrolledForCurrentSearch: Boolean = false
+)
+
+data class DiscoverSearchState(
+	val healthLabelsIndex: List<Pair<String, HealthLabels>> = emptyList(),
+	val dietLabelsIndex: List<Pair<String, DietLabels>> = emptyList(),
+	val currentKeyword: String = "",
+	val minCalories: String = "200",
+	val maxCalories: String = "1800",
+	val selectedHealthLabels: List<HealthLabels> = emptyList(),
+	val selectedDietLabels: List<DietLabels> = emptyList()
 )
 
 data class DiscoverItemUiState(

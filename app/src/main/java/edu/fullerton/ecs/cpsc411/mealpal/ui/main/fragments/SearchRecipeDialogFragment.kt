@@ -7,10 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import edu.fullerton.ecs.cpsc411.mealpal.R
@@ -19,10 +17,7 @@ import edu.fullerton.ecs.cpsc411.mealpal.shared.DietLabels
 import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.*
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import java.util.Collections
+import timber.log.Timber
 
 class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentSearchRecipeDialogBinding? = null
@@ -42,67 +37,81 @@ class SearchRecipeDialogFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.bindState(
-            uiState = discoverViewModel.discoverUiState,
-            onQueryChanged = discoverViewModel.accept
+            uiState = discoverViewModel.discoverSearchState
         )
     }
 
     private fun FragmentSearchRecipeDialogBinding.bindState(
-        uiState: StateFlow<DiscoverUiState>,
-        onQueryChanged: (UiAction.Search) -> Unit
+        uiState: StateFlow<DiscoverSearchState>
     ) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                uiState.map { it.query }
-                    .distinctUntilChanged()
-                    .map { it.keyword }
-                    .collect(editTextKeyword::setText)
+        uiState.value.apply {
+            editTextKeyword.setText(currentKeyword)
+            rangeSlider.values = listOf(minCalories.toFloat(), maxCalories.toFloat())
+            if (selectedHealthLabels.isNotEmpty()) {
+                editTextHealthLabels.setText(selectedHealthLabels[0].resId)
             }
+            if (selectedDietLabels.isNotEmpty()) {
+                editTextDietLabels.setText(selectedDietLabels[0].resId)
+            }
+        }
+        editTextKeyword.doOnTextChanged { text, _, _, _ ->
+            discoverViewModel.updateCurrentKeyword(text)
         }
         val dietLabelsAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             this@SearchRecipeDialogFragment.requireContext(),
             android.R.layout.select_dialog_item,
-            listOf(getString(R.string.none_selection_option)) + DietLabels.values().map { getString(it.resId) }
+            listOf(getString(R.string.none_selection_option)) +
+                    DietLabels.values().map {
+                        getString(it.resId).apply {
+                            discoverViewModel.indexLocalizedDietLabels(this, it)
+                        }
+                    }
         )
         editTextDietLabels.apply {
             setAdapter(dietLabelsAdapter)
             inputType = InputType.TYPE_NULL
+            doOnTextChanged { text, _, _, _ ->
+                discoverViewModel.setDietLabel(text)
+            }
         }
 
         val healthLabelsAdapter: ArrayAdapter<String> = ArrayAdapter<String>(
             this@SearchRecipeDialogFragment.requireContext(),
             android.R.layout.select_dialog_item,
-            listOf(getString(R.string.none_selection_option)) + HealthLabels.values().map { getString(it.resId) }
+            listOf(getString(R.string.none_selection_option)) +
+                    HealthLabels.values().map {
+                        getString(it.resId).apply {
+                            discoverViewModel.indexLocalizedHealthLabels(this, it)
+                        }
+                    }
         )
         editTextHealthLabels.apply {
             setAdapter(healthLabelsAdapter)
             inputType = InputType.TYPE_NULL
+            doOnTextChanged { text, _, _, _ ->
+                discoverViewModel.setHealthLabel(text)
+            }
         }
 
-        // TODO use if needed to store range in viewmodel(persists last entered calorie range)
-//        rangeSlider.addOnChangeListener { rangeSlider, value, fromUser ->
-//            Timber.i("${rangeSlider.activeThumbIndex}, $value, $fromUser")
-//            // Responds to when slider's value is changed
-//        }
-
-        buttonApply.setOnClickListener {
-            val minMax: Pair<Int, Int> = rangeSlider.values.let {
-                Pair(Collections.min(it).toInt(), Collections.max(it).toInt())
-            }
-            // TODO: Build the entire query not just keyword
-            editTextKeyword.text?.trim()?.let {
-                if (it.isNotEmpty()) {
-                    onQueryChanged(
-                        UiAction.Search(
-                            query = DiscoverQuery(
-                                keyword = it.toString(),
-                                calMin = minMax.first.toString(),
-                                calThresh = minMax.second.toString()
-                            )
-                        )
-                    )
+        rangeSlider.addOnChangeListener { rangeSlider, value, fromUser ->
+            Timber.i("${rangeSlider.activeThumbIndex}, $value, $fromUser")
+            when (rangeSlider.activeThumbIndex) {
+                // min
+                0 -> {
+                    discoverViewModel.setMinCalories(value)
+                }
+                // max
+                1 -> {
+                    discoverViewModel.setMaxCalories(value)
+                }
+                else -> {
+                    // invalid slider do nothing
                 }
             }
+        }
+
+        buttonApply.setOnClickListener {
+            discoverViewModel.executeSearch()
             dismiss()
         }
     }

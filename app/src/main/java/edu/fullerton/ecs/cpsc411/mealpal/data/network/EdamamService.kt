@@ -3,6 +3,7 @@ package edu.fullerton.ecs.cpsc411.mealpal.data.network
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import edu.fullerton.ecs.cpsc411.mealpal.BuildConfig
+import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -18,6 +19,8 @@ interface EdamamService {
 		@Query("app_id") id: String = BuildConfig.EDAMAM_ID,
 		@Query("app_key") key: String = BuildConfig.EDAMAM_KEY,
 		@Query("calories") calories: String,
+		@Query("health") healthLabels: List<String>?,
+		@Query("diet") dietLabels: List<String>?,
 		@Query("_cont") pageId: String? = null
 	): RecipesResponse
 
