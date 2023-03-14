@@ -7,6 +7,7 @@ import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.data.repository.PreferencesRepository
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
 import edu.fullerton.ecs.cpsc411.mealpal.shared.DietLabels
 import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class DiscoverViewModel @Inject constructor(
 	private val recipeRepo: RecipeRepository,
 	private val recipeInteractionsUseCase: RecipeInteractionsUseCase,
-	private val savedStateHandle: SavedStateHandle
+	private val savedStateHandle: SavedStateHandle,
+	private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 	private val _discoverSearchState = MutableStateFlow(DiscoverSearchState())
 	val discoverSearchState = _discoverSearchState.asStateFlow()
@@ -77,6 +79,11 @@ class DiscoverViewModel @Inject constructor(
 
 	private fun searchRepo(queryString: DiscoverQuery) : Flow<PagingData<DiscoverItemUiState>> =
 		recipeRepo.fetchRecipes(queryString)
+			.cachedIn(viewModelScope)
+			.combine(preferencesRepository.userMpPrefsCache) { pagingData, _ ->
+				// we don't need to do anything with user prefs here we just want to refresh when they change
+				pagingData
+			}
 			.map { pagingData ->
 				pagingData.map { recipeWithIngredients ->
 					val recipeListModel = recipeWithIngredients.recipe.asRecipeListModel()

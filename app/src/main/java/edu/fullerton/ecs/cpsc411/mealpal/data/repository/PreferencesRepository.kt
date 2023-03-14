@@ -9,10 +9,7 @@ import edu.fullerton.ecs.cpsc411.mealpal.modules.ApplicationScope
 import edu.fullerton.ecs.cpsc411.mealpal.shared.DietLabels
 import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,14 +20,17 @@ class PreferencesRepository @Inject constructor(
     @ApplicationScope private val appScope: CoroutineScope
 ) {
     // provides a cache for frequently accessed user profile data
-    private val userMpPrefsCache = MutableStateFlow(UserMpPrefs())
+    private val _userMpPrefsCache = MutableStateFlow(UserMpPrefs())
+    val userMpPrefsCache = _userMpPrefsCache.filter {
+        it.userHealthLabels != null && it.userDietLabels != null
+    }
 
     init {
         // populate cache
         appScope.launch {
             val userDietLabels = getDietPreferences()
             val userHealthLabels = getHealthPreferences()
-            userMpPrefsCache.update {
+            _userMpPrefsCache.update {
                 it.copy(
                     userHealthLabels = userHealthLabels,
                     userDietLabels = userDietLabels
@@ -54,12 +54,12 @@ class PreferencesRepository @Inject constructor(
         dataStore.edit { preferences ->
             preferences[DIET_PREFS] = dietPrefs.toStringSet()
         }
-        userMpPrefsCache.update { it.copy(userDietLabels = dietPrefs) }
+        _userMpPrefsCache.update { it.copy(userDietLabels = dietPrefs) }
     }
 
     suspend fun getDietPreferences() : List<DietLabels> {
         // return cache, if cache is not yet populated return persisted value
-        return userMpPrefsCache.value.userDietLabels ?: run {
+        return _userMpPrefsCache.value.userDietLabels ?: run {
             dataStore.data.map { preferences ->
                 preferences[DIET_PREFS]?.toDietLabels() ?: emptyList()
             }.first()
@@ -70,12 +70,12 @@ class PreferencesRepository @Inject constructor(
         dataStore.edit { preferences ->
             preferences[HEALTH_PREFS] = selectedHealthLabels.toStringSet()
         }
-        userMpPrefsCache.update { it.copy(userHealthLabels = selectedHealthLabels) }
+        _userMpPrefsCache.update { it.copy(userHealthLabels = selectedHealthLabels) }
     }
 
     suspend fun getHealthPreferences() : List<HealthLabels> {
         // return cache, if cache is not yet populated return persisted value
-        return userMpPrefsCache.value.userHealthLabels ?: run {
+        return _userMpPrefsCache.value.userHealthLabels ?: run {
             dataStore.data.map { preferences ->
                 preferences[HEALTH_PREFS]?.toHealthLabels() ?: emptyList()
             }.first()
