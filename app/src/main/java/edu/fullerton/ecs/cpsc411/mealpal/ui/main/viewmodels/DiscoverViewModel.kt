@@ -164,6 +164,26 @@ class DiscoverViewModel @Inject constructor(
 			.find { it.first == label?.trim().toString() }?.second ?:return
 		_discoverSearchState.update { it.copy(selectedDietLabels = listOf(selectedDietLabel)) }
 	}
+
+	fun setUseHealthProfile(state: Boolean) {
+		viewModelScope.launch {
+			_discoverSearchState.update {
+				it.copy(
+					shouldUseHealthProfile = state,
+					selectedHealthLabels = if (state) {
+						preferencesRepository.userMpPrefsCache.first().userHealthLabels ?: emptyList()
+					} else {
+						emptyList()
+					},
+					selectedDietLabels = if (state) {
+						preferencesRepository.userMpPrefsCache.first().userDietLabels ?: emptyList()
+					} else {
+						emptyList()
+					}
+				)
+			}
+		}
+	}
 }
 
 sealed class UiAction {
@@ -184,7 +204,8 @@ data class DiscoverSearchState(
 	val minCalories: String = "200",
 	val maxCalories: String = "1800",
 	val selectedHealthLabels: List<HealthLabels> = emptyList(),
-	val selectedDietLabels: List<DietLabels> = emptyList()
+	val selectedDietLabels: List<DietLabels> = emptyList(),
+	val shouldUseHealthProfile: Boolean = false
 )
 
 data class DiscoverItemUiState(
