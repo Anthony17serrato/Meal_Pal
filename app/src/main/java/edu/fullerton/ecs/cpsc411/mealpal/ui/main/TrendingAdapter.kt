@@ -18,7 +18,6 @@ class TrendingAdapter(private val onClick: (String) -> Unit)
 	class RecipeViewHolder(itemView: View, val onClick: (String) -> Unit) : RecyclerView.ViewHolder(itemView) {
 		private val mealTitle: TextView = itemView.findViewById(R.id.trendingTitle)
 		private val mealImage: ImageView = itemView.findViewById(R.id.trendingImage)
-		private val viewRecipeButton: Button= itemView.findViewById(R.id.viewRecipeButton)
 		private var url: String? = null
 
 		/* Bind recipe data. */
@@ -29,9 +28,6 @@ class TrendingAdapter(private val onClick: (String) -> Unit)
 				Glide.with(mealImage.context).load(recipe.image).into(mealImage)
 			}
 			itemView.setOnClickListener {
-				itemSelected(discoverItem)
-			}
-			viewRecipeButton.setOnClickListener {
 				itemSelected(discoverItem)
 			}
 		}

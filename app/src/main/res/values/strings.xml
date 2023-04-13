@@ -106,4 +106,5 @@
     <string name="range_helper">Select a range of calories</string>
     <string name="none_selection_option">None</string>
     <string name="interaction_icon">Interaction Icon</string>
+    <string name="more">More</string>
 </resources>

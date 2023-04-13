@@ -9,7 +9,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:orientation="horizontal">
 
         <TextView
@@ -23,13 +22,22 @@
             android:text="@string/trending_header"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="150dp"
+        <Button
+            android:id="@+id/iconButton"
+            style="?attr/materialIconButtonFilledTonalStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            app:srcCompat="@drawable/badge"
-            tools:ignore="ImageContrastCheck" />
+            android:contentDescription="@string/more"
+            app:icon="@drawable/baseline_arrow_forward_24" />
+
+<!--        <ImageView-->
+<!--            android:id="@+id/imageView"-->
+<!--            android:layout_width="150dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="end"-->
+<!--            app:srcCompat="@drawable/badge"-->
+<!--            tools:ignore="ImageContrastCheck" />-->
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
