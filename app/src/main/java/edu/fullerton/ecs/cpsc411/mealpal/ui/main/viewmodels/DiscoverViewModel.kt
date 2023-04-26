@@ -1,10 +1,13 @@
 package edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels
 
+import androidx.annotation.DrawableRes
+import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
+import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.PreferencesRepository
@@ -30,6 +33,8 @@ class DiscoverViewModel @Inject constructor(
 ) : ViewModel() {
 	private val _discoverSearchState = MutableStateFlow(DiscoverSearchState())
 	val discoverSearchState = _discoverSearchState.asStateFlow()
+	private val _quickPicksState = MutableStateFlow(QuickPicksState())
+	val quickPicksState = _quickPicksState.asStateFlow()
 	val discoverUiState: StateFlow<DiscoverUiState>
 	val pagingDataFlow: Flow<PagingData<DiscoverItemUiState>>
 	val accept: (UiAction) -> Unit
@@ -138,6 +143,7 @@ class DiscoverViewModel @Inject constructor(
 	fun executeSearch() {
 		_discoverSearchState.value.apply {
 			if (currentKeyword.isNotEmpty()) {
+				_quickPicksState.update { it.copy(selectedPick = null) }
 				accept(
 					UiAction.Search(
 						query = DiscoverQuery(
@@ -184,6 +190,20 @@ class DiscoverViewModel @Inject constructor(
 			}
 		}
 	}
+
+	fun setSelectedQuickPick(quickPicks: QuickPicks) {
+		if (quickPicks == _quickPicksState.value.selectedPick) {
+			_quickPicksState.update { it.copy(selectedPick = null) }
+			accept(
+				UiAction.Search(DiscoverQuery())
+			)
+		} else {
+			_quickPicksState.update { it.copy(selectedPick = quickPicks) }
+			accept(
+				UiAction.Search(DiscoverQuery(keyword = quickPicks.searchableName))
+			)
+		}
+	}
 }
 
 sealed class UiAction {
@@ -212,6 +232,30 @@ data class DiscoverItemUiState(
 	val recipeListModel: RecipeListModel,
 	val recipeInteractions: RecipeInteraction,
 	val onSelect: () -> Unit
+)
+
+// TODO Extract string resources
+enum class QuickPicks(val cuisineName: String, val searchableName: String, @DrawableRes val icon: Int) {
+	Sushi("Sushi", "Sushi", R.drawable.sushi_quick_pick),
+	Thai("Thai", "Thai food", R.drawable.thai_food_quick_pick),
+	Healthy("Healthy", "Healthy food", R.drawable.healthy_quick_pick),
+	Pizza("Pizza", "Pizza", R.drawable.pizza_quick_pick),
+	Desserts("Desserts", "Desserts", R.drawable.desserts_quick_pick),
+	Mexican("Mexican", "Mexican food", R.drawable.mexican_quick_pick),
+	Chicken("Chicken", "Chicken", R.drawable.chicken_quick_pick),
+	Italian("Italian", "Italian food", R.drawable.italian_quick_pick),
+	Steak("Steak", "Steak", R.drawable.steak_quick_pick),
+	Ramen("Ramen", "Ramen", R.drawable.ramen_quick_pick),
+	Asian("Asian", "Asian food", R.drawable.asian_quick_pick),
+	Chinese("Chinese", "Chinese food", R.drawable.chinese_quick_pick),
+	Pho("Pho", "Pho", R.drawable.pho_quick_pick),
+	Coffee("Coffee", "Coffee", R.drawable.coffee_quick_pick),
+	Soup("Soup", "Soup", R.drawable.soup_quick_pick),
+	Sandwiches("Sandwiches", "Sandwiches", R.drawable.sandwich_quick_pick)
+}
+
+data class QuickPicksState(
+	val selectedPick: QuickPicks? = null
 )
 
 private const val LAST_SEARCH_QUERY: String = "last_search_query"

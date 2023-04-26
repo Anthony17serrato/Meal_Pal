@@ -8,6 +8,24 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
@@ -15,11 +33,19 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
+import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverItemUiState
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModel
+import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.QuickPicks
 
-class DiscoverAdapter(private val onClick: (String) -> Unit)
-	: PagingDataAdapter<DiscoverItemUiState, RecyclerView.ViewHolder>(DiscoverItemUiStateDiffCallback) {
+class DiscoverAdapter(
+	private val onClick: (String) -> Unit,
+	private val quickPicks: List<QuickPicks>,
+	private val onSelectQuickPick: (QuickPicks) -> Unit,
+	// TODO fix anti-pattern
+	private val viewModel: DiscoverViewModel
+) : PagingDataAdapter<DiscoverItemUiState, RecyclerView.ViewHolder>(DiscoverItemUiStateDiffCallback) {
 
 	class RecipeViewHolder(itemView: View, val onClick: (String) -> Unit) : RecyclerView.ViewHolder(itemView) {
 		private val mealTitle: TextView = itemView.findViewById(R.id.meal_title)
@@ -62,14 +88,33 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 		}
 	}
 
-	class TrendingViewHolder(itemView: View, val onClick: (String) -> Unit)
+	class TrendingViewHolder(
+		itemView: View,
+		val onClick: (String) -> Unit,
+		private val onSelectQuickPick: (QuickPicks) -> Unit,
+		private val quickPicks: List<QuickPicks>,
+		viewModel: DiscoverViewModel
+	)
 		: RecyclerView.ViewHolder(itemView) {
 		private val trendingRecycler: RecyclerView = itemView.findViewById(R.id.nestedrecycler)
+		private val composeQuickPicks: ComposeView = itemView.findViewById(R.id.compose_quick_picks)
+
 		private val recipeAdapter = TrendingAdapter {
 			onClick(it)
 		}
 
 		init {
+			composeQuickPicks.apply {
+				// Dispose of the Composition when the view's LifecycleOwner
+				// is destroyed
+				setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+				setContent {
+					// In Compose world
+					Mdc3Theme {
+						QuickPicks(onSelectQuickPick, quickPicks, viewModel)
+					}
+				}
+			}
 			trendingRecycler.apply {
 				layoutManager = LinearLayoutManager(trendingRecycler.context, LinearLayoutManager.HORIZONTAL,false)
 				adapter = recipeAdapter
@@ -105,7 +150,7 @@ class DiscoverAdapter(private val onClick: (String) -> Unit)
 			TRENDING -> {
 				val view = LayoutInflater.from(parent.context)
 					.inflate(R.layout.item_trend, parent, false)
-				TrendingViewHolder(view, onClick)
+				TrendingViewHolder(view, onClick, onSelectQuickPick, quickPicks, viewModel)
 			}
 			MEAL -> {
 				val view = LayoutInflater.from(parent.context)
@@ -164,5 +209,72 @@ object DiscoverItemUiStateDiffCallback : DiffUtil.ItemCallback<DiscoverItemUiSta
 
 	override fun areContentsTheSame(oldItem: DiscoverItemUiState, newItem: DiscoverItemUiState): Boolean {
 		return oldItem.recipeListModel.saveTime == newItem.recipeListModel.saveTime
+	}
+}
+
+@Composable
+fun QuickPicks(
+	onSelectQuickPick: (QuickPicks) -> Unit,
+	quickPicksList: List<QuickPicks>,
+	viewModel: DiscoverViewModel
+) {
+	val quickPicksState by viewModel.quickPicksState.collectAsState()
+	LazyRow(
+		modifier = Modifier
+			.fillMaxWidth()
+	) {
+		items(quickPicksList) {item ->
+			QuickPickItem(
+				name = item.cuisineName,
+				icon = item.icon,
+				isSelected = quickPicksState.selectedPick == item,
+				modifier = Modifier
+					.padding(start = 8.dp, end = 8.dp)
+					.clickable {
+						onSelectQuickPick(item)
+					}
+			)
+		}
+	}
+}
+
+@Composable
+fun QuickPickItem(
+	name: String,
+	icon: Int,
+	isSelected: Boolean,
+	modifier: Modifier = Modifier
+) {
+	val selectedColor = MaterialTheme.colorScheme.primaryContainer
+	Column(
+		modifier = modifier,
+		horizontalAlignment = Alignment.CenterHorizontally
+	) {
+		Box(
+			contentAlignment = Alignment.Center,
+			modifier = Modifier
+				.size(46.dp)
+				.drawBehind {
+					if (isSelected) {
+						drawCircle(selectedColor)
+					}
+				}
+		) {
+			Icon(
+				imageVector = ImageVector.vectorResource(id = icon),
+				contentDescription = "$name Icon",
+				tint = Color.Unspecified,
+				modifier = Modifier
+					.size(38.dp)
+			)
+		}
+		Text(
+			text = name,
+			color = if (isSelected) {
+				MaterialTheme.colorScheme.primary
+			} else {
+				LocalTextStyle.current.color
+			}
+		)
 	}
 }

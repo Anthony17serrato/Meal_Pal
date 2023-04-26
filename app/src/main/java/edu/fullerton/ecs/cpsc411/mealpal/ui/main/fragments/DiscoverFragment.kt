@@ -58,9 +58,14 @@ class DiscoverFragment : Fragment() {
         pagingData: Flow<PagingData<DiscoverItemUiState>>,
         uiActions: (UiAction) -> Unit
     ) {
-        val discoverAdapter = DiscoverAdapter { url ->
-            onClickItem(url)
-        }
+        val discoverAdapter = DiscoverAdapter(
+            onClick = { url ->
+                onClickItem(url)
+            },
+            quickPicks = QuickPicks.values().asList(),
+            onSelectQuickPick = { pick -> discoverViewModel.setSelectedQuickPick(pick)},
+            viewModel = discoverViewModel
+        )
         discoverRecyclerview.apply {
             layoutManager = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
             adapter = discoverAdapter.withLoadStateFooter(
