@@ -62,7 +62,6 @@ class DiscoverFragment : Fragment() {
             onClick = { url ->
                 onClickItem(url)
             },
-            quickPicks = QuickPicks.values().asList(),
             onSelectQuickPick = { pick -> discoverViewModel.setSelectedQuickPick(pick)},
             viewModel = discoverViewModel
         )

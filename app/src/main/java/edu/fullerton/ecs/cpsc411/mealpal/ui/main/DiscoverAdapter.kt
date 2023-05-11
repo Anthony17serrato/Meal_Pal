@@ -8,10 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.cardview.widget.CardView
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -38,10 +40,10 @@ import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverItemUiState
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.QuickPicks
+import kotlinx.coroutines.delay
 
 class DiscoverAdapter(
 	private val onClick: (String) -> Unit,
-	private val quickPicks: List<QuickPicks>,
 	private val onSelectQuickPick: (QuickPicks) -> Unit,
 	// TODO fix anti-pattern
 	private val viewModel: DiscoverViewModel
@@ -92,7 +94,6 @@ class DiscoverAdapter(
 		itemView: View,
 		val onClick: (String) -> Unit,
 		private val onSelectQuickPick: (QuickPicks) -> Unit,
-		private val quickPicks: List<QuickPicks>,
 		viewModel: DiscoverViewModel
 	)
 		: RecyclerView.ViewHolder(itemView) {
@@ -111,7 +112,7 @@ class DiscoverAdapter(
 				setContent {
 					// In Compose world
 					Mdc3Theme {
-						QuickPicks(onSelectQuickPick, quickPicks, viewModel)
+						QuickPicks(onSelectQuickPick, viewModel)
 					}
 				}
 			}
@@ -150,7 +151,7 @@ class DiscoverAdapter(
 			TRENDING -> {
 				val view = LayoutInflater.from(parent.context)
 					.inflate(R.layout.item_trend, parent, false)
-				TrendingViewHolder(view, onClick, onSelectQuickPick, quickPicks, viewModel)
+				TrendingViewHolder(view, onClick, onSelectQuickPick, viewModel)
 			}
 			MEAL -> {
 				val view = LayoutInflater.from(parent.context)
@@ -212,23 +213,47 @@ object DiscoverItemUiStateDiffCallback : DiffUtil.ItemCallback<DiscoverItemUiSta
 	}
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun QuickPicks(
 	onSelectQuickPick: (QuickPicks) -> Unit,
-	quickPicksList: List<QuickPicks>,
 	viewModel: DiscoverViewModel
 ) {
 	val quickPicksState by viewModel.quickPicksState.collectAsState()
+
+	val lazyListState = rememberLazyListState()
+
+	LaunchedEffect(quickPicksState.sortedQuickPicks) {
+		if (quickPicksState.sortedQuickPicks.isNotEmpty()) {
+			// Check if the order of items has changed
+			val hasOrderChanged = quickPicksState.sortedQuickPicks != lazyListState.layoutInfo.visibleItemsInfo
+				.map { quickPicksState.sortedQuickPicks[it.index] }
+
+			if (hasOrderChanged) {
+				// Animate the items
+				lazyListState.animateScrollToItem(0)
+
+				// Wait for the animation to finish
+				delay(500)
+
+				// Scroll to the top
+				lazyListState.scrollToItem(0)
+			}
+		}
+	}
+
 	LazyRow(
 		modifier = Modifier
-			.fillMaxWidth()
+			.fillMaxWidth(),
+		state = lazyListState
 	) {
-		items(quickPicksList) {item ->
+		items(quickPicksState.sortedQuickPicks, key = { it.ordinal }) {item ->
 			QuickPickItem(
 				name = item.cuisineName,
 				icon = item.icon,
 				isSelected = quickPicksState.selectedPick == item,
 				modifier = Modifier
+					.animateItemPlacement()
 					.padding(start = 8.dp, end = 8.dp)
 					.clickable {
 						onSelectQuickPick(item)

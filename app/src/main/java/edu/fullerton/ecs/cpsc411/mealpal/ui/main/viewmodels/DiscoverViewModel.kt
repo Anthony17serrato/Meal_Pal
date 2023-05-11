@@ -11,6 +11,7 @@ import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.PreferencesRepository
+import edu.fullerton.ecs.cpsc411.mealpal.data.repository.QuickPicksRepository
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.RecipeRepository
 import edu.fullerton.ecs.cpsc411.mealpal.shared.DietLabels
 import edu.fullerton.ecs.cpsc411.mealpal.shared.HealthLabels
@@ -29,7 +30,8 @@ class DiscoverViewModel @Inject constructor(
 	private val recipeRepo: RecipeRepository,
 	private val recipeInteractionsUseCase: RecipeInteractionsUseCase,
 	private val savedStateHandle: SavedStateHandle,
-	private val preferencesRepository: PreferencesRepository
+	private val preferencesRepository: PreferencesRepository,
+	private val quickPicksRepository: QuickPicksRepository
 ) : ViewModel() {
 	private val _discoverSearchState = MutableStateFlow(DiscoverSearchState())
 	val discoverSearchState = _discoverSearchState.asStateFlow()
@@ -40,6 +42,13 @@ class DiscoverViewModel @Inject constructor(
 	val accept: (UiAction) -> Unit
 
 	init {
+		viewModelScope.launch {
+			// init quick picks rank
+			_quickPicksState.update {
+				it.copy(sortedQuickPicks = quickPicksRepository.getRankedQuickPicks())
+			}
+		}
+
 		val initialQuery: DiscoverQuery = savedStateHandle[LAST_SEARCH_QUERY] ?: DEFAULT_QUERY
 		val lastQueryScrolled: DiscoverQuery = savedStateHandle[LAST_QUERY_SCROLLED] ?: DEFAULT_QUERY
 		val actionStateFlow = MutableSharedFlow<UiAction>()
@@ -198,6 +207,7 @@ class DiscoverViewModel @Inject constructor(
 				UiAction.Search(DiscoverQuery())
 			)
 		} else {
+			quickPicksRepository.increaseQuickPickRank(quickPicks.name)
 			_quickPicksState.update { it.copy(selectedPick = quickPicks) }
 			accept(
 				UiAction.Search(DiscoverQuery(keyword = quickPicks.searchableName))
@@ -255,6 +265,7 @@ enum class QuickPicks(val cuisineName: String, val searchableName: String, @Draw
 }
 
 data class QuickPicksState(
+	val sortedQuickPicks: List<QuickPicks> = QuickPicks.values().asList(),
 	val selectedPick: QuickPicks? = null
 )
 
