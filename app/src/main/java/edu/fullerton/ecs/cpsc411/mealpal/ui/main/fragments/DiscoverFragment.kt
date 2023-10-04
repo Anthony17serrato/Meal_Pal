@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -17,6 +19,7 @@ import androidx.paging.PagingData
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.accompanist.themeadapter.material3.Mdc3Theme
 import dagger.hilt.android.AndroidEntryPoint
 import edu.fullerton.ecs.cpsc411.mealpal.databinding.FragmentDiscoverBinding
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.DiscoverAdapter
@@ -38,19 +41,33 @@ class DiscoverFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDiscoverBinding.inflate(inflater, container, false)
-        return binding.root
+//        _binding = FragmentDiscoverBinding.inflate(inflater, container, false)
+//        return binding.root
+        return ComposeView(requireContext()).apply {
+            // Dispose of the Composition when the view's LifecycleOwner
+            // is destroyed
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                // In Compose world
+                Mdc3Theme {
+                    DiscoverScreen(
+                        onClickItemDetails = this@DiscoverFragment::onClickItem,
+                        discoverViewModel = discoverViewModel
+                    )
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.i("Discover View created")
 
-        binding.bindState(
-            discoverUiState = discoverViewModel.discoverUiState,
-            pagingData = discoverViewModel.pagingDataFlow,
-            uiActions = discoverViewModel.accept
-        )
+//        binding.bindState(
+//            discoverUiState = discoverViewModel.discoverUiState,
+//            pagingData = discoverViewModel.pagingDataFlow,
+//            uiActions = discoverViewModel.accept
+//        )
     }
 
     private fun FragmentDiscoverBinding.bindState(

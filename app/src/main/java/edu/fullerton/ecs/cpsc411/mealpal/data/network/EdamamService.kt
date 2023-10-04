@@ -27,12 +27,22 @@ interface EdamamService {
 	@Headers("Accept: application/json")
 	@GET("v2?type=public")
 	suspend fun getDefaultRecipes(
+		@Query("q") keyword: String = "Salad",
 		@Query("_cont") pageId: String? = null,
 		@Query("app_id") id: String = BuildConfig.EDAMAM_ID,
 		@Query("app_key") key: String = BuildConfig.EDAMAM_KEY,
+	): RecipesResponse
+
+	@Headers("Accept: application/json")
+	@GET("v2?type=public")
+	suspend fun getTrendingRecipes(
+		@Query("_cont") pageId: String? = null,
+		@Query("app_id") id: String = BuildConfig.EDAMAM_ID,
+		@Query("app_key") key: String = BuildConfig.EDAMAM_KEY,
+		// TODO: Meal type should be based on current time of day
 		@Query("mealType") mealType: String = "Dinner",
 		@Query("dishType") dishType: String = "Main course",
-		@Query("diet") diet: String = "balanced"
+		@Query("random") random: Boolean = true
 	): RecipesResponse
 
 //	@Headers("Accept: application/json")

@@ -14,5 +14,6 @@
 .cxx
 /apikey.properties
 /.idea/misc.xml
+/.idea
 /app/release/
 /app/google-services.json

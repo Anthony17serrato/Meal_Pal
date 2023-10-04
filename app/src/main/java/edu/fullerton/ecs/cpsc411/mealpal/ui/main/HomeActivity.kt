@@ -1,6 +1,7 @@
 package edu.fullerton.ecs.cpsc411.mealpal.ui.main
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -41,7 +42,7 @@ class HomeActivity : AppCompatActivity() {
             modalBottomSheet.show(supportFragmentManager, SearchRecipeDialogFragment.TAG)
         }
         binding.bottomNavigation.setupWithNavController(navController)
-        binding.appBarLayout.setBackgroundColor(getColorFromAttr(R.attr.colorSurface))
+        binding.appBarLayout.setBackgroundColor(getColorFromAttr(Color.BLUE))
         binding.homeToolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.action_search -> {

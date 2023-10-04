@@ -5,8 +5,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import timber.log.Timber
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -24,6 +26,9 @@ object CoroutineScopesModule {
     fun providesCoroutineScope(
         @MainDispatcher mainDispatcher: CoroutineDispatcher
     ): CoroutineScope {
-        return CoroutineScope(SupervisorJob() + mainDispatcher)
+        val handler = CoroutineExceptionHandler { _, exception ->
+            Timber.e(exception, "CoroutineExceptionHandler got ")
+        }
+        return CoroutineScope(SupervisorJob() + mainDispatcher + handler)
     }
 }

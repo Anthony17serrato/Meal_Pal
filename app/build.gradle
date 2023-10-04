@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
     id 'kotlin-parcelize'
     id 'com.google.dagger.hilt.android'
     id 'androidx.navigation.safeargs.kotlin'
@@ -14,14 +15,14 @@ def apikeyProperties = new Properties()
 apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "edu.fullerton.ecs.cpsc411.mealpal"
         minSdkVersion 22
-        targetSdkVersion 33
-        versionCode 5
-        versionName "1.0.5b"
+        targetSdkVersion 34
+        versionCode 8
+        versionName "1.0.8b"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -33,6 +34,16 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("/Users/anthony17/Desktop/keystore.jks")
+            storePassword apikeyProperties['RELEASE_SIGNING']
+            keyAlias "keystore"
+            keyPassword apikeyProperties['RELEASE_SIGNING']
         }
     }
 
@@ -42,7 +53,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.2"
+        kotlinCompilerExtensionVersion = "1.5.2"
     }
 
     compileOptions {
@@ -64,6 +75,8 @@ android {
 }
 
 dependencies {
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2'
     def composeBom = platform('androidx.compose:compose-bom:2023.03.00')
     implementation composeBom
     androidTestImplementation composeBom
@@ -79,39 +92,37 @@ dependencies {
     implementation 'androidx.compose.material:material-icons-extended'
 
     // Optional - Integration with activities
-    implementation 'androidx.activity:activity-compose:1.7.0'
+    implementation 'androidx.activity:activity-compose:1.7.2'
     // Optional - Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
-    implementation "com.google.accompanist:accompanist-themeadapter-material3:0.31.0-alpha"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2'
+    implementation("com.google.accompanist:accompanist-themeadapter-material3:0.30.1")
     // other dependencies
-
-    implementation 'androidx.core:core-ktx:1.10.0'
 
     // ktx artifacts
     //Coroutines
-    def coroutinesVersion = '2.5.1'
+    def coroutinesVersion = '2.6.2'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$coroutinesVersion"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$coroutinesVersion"
-    implementation "androidx.fragment:fragment-ktx:1.5.6"
-    implementation "androidx.activity:activity-ktx:1.7.0"
-    implementation "androidx.core:core-ktx:1.10.0"
+    implementation "androidx.fragment:fragment-ktx:1.6.1"
+    implementation "androidx.activity:activity-ktx:1.7.2"
     implementation 'androidx.palette:palette-ktx:1.0.0'
-    implementation "androidx.paging:paging-runtime-ktx:3.1.1"
-    def nav_version = "2.5.3"
+    implementation "androidx.paging:paging-runtime-ktx:3.2.1"
+    implementation "androidx.paging:paging-compose:3.3.0-alpha02"
+    def nav_version = "2.7.3"
     // Kotlin
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     // Room components
-    def roomVersion = "2.5.0"
+    def roomVersion = "2.5.2"
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"
     annotationProcessor "androidx.room:room-compiler:$roomVersion"
     // To use Kotlin annotation processing tool (kapt)
-    kapt "androidx.room:room-compiler:$roomVersion"
+    ksp "androidx.room:room-compiler:$roomVersion"
     // Hilt
-    implementation "com.google.dagger:hilt-android:2.44"
-    kapt "com.google.dagger:hilt-compiler:2.44"
+    implementation "com.google.dagger:hilt-android:2.46"
+    kapt "com.google.dagger:hilt-compiler:2.46"
     // Moshi JSON parser
     implementation 'com.squareup.moshi:moshi-kotlin:1.13.0'
     implementation 'com.squareup.moshi:moshi-adapters:1.8.0'
@@ -120,13 +131,16 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation "androidx.browser:browser:1.5.0"
+    implementation "androidx.browser:browser:1.6.0"
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
+    // To be replaced by Coil once 100% compose migration
     implementation 'com.github.bumptech.glide:glide:4.11.0'
-    kapt 'com.github.bumptech.glide:compiler:4.11.0'
+    ksp "com.github.bumptech.glide:ksp:4.14.2"
+    // Coil
+    implementation "io.coil-kt:coil-compose:2.1.0"
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.recyclerview:recyclerview:1.3.1'
     implementation 'com.jakewharton.timber:timber:5.0.1'
     implementation "androidx.datastore:datastore-preferences:1.0.0"
 

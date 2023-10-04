@@ -11,12 +11,15 @@ import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.modules.ApplicationScope
 import edu.fullerton.ecs.cpsc411.mealpal.data.network.EdamamService
+import edu.fullerton.ecs.cpsc411.mealpal.data.network.asEntityList
 import edu.fullerton.ecs.cpsc411.mealpal.ui.main.viewmodels.DiscoverQuery
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import okio.IOException
+import retrofit2.HttpException
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -88,6 +91,24 @@ class RecipeRepository @Inject constructor(
 	 * 	provided recipe.
 	 */
 	fun viewNonPersistedRecipe(recipe: RecipeWithIngredients) = nonPersistedRecipe.update { recipe }
+
+	/**
+	 * Fetches 20 random recipes to be temporarily displayed based on current time of day.
+	 * morning = breakfast; afternoon = lunch; evening = dinner. Future revisions will use recipe popularity
+	 * data to determine what is shown in the trending section.
+	 */
+	suspend fun fetchTrendingRecipes(): List<RecipeWithIngredients> {
+		return try {
+			recipeRemoteDataSource.getTrendingRecipes()
+				.hits.asEntityList(pageId = null)
+		} catch (exception: IOException) {
+			Timber.e(exception)
+			emptyList()
+		} catch (exception: HttpException) {
+			Timber.e(exception)
+			emptyList()
+		}
+	}
 
 	companion object {
 		const val NETWORK_PAGE_SIZE = 20

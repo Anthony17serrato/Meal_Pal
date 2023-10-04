@@ -9,6 +9,7 @@ import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.fullerton.ecs.cpsc411.mealpal.R
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeListModel
+import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.RecipeWithIngredients
 import edu.fullerton.ecs.cpsc411.mealpal.data.local.entities.asRecipeListModel
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.PreferencesRepository
 import edu.fullerton.ecs.cpsc411.mealpal.data.repository.QuickPicksRepository
@@ -35,17 +36,27 @@ class DiscoverViewModel @Inject constructor(
 ) : ViewModel() {
 	private val _discoverSearchState = MutableStateFlow(DiscoverSearchState())
 	val discoverSearchState = _discoverSearchState.asStateFlow()
+
 	private val _quickPicksState = MutableStateFlow(QuickPicksState())
 	val quickPicksState = _quickPicksState.asStateFlow()
+
+	private val _trendingState = MutableStateFlow(DiscoverTrendingState())
+	val trendingState = _trendingState.asStateFlow()
+
 	val discoverUiState: StateFlow<DiscoverUiState>
 	val pagingDataFlow: Flow<PagingData<DiscoverItemUiState>>
 	val accept: (UiAction) -> Unit
 
 	init {
-		viewModelScope.launch {
-			// init quick picks rank
-			_quickPicksState.update {
-				it.copy(sortedQuickPicks = quickPicksRepository.getRankedQuickPicks())
+		viewModelScope.apply {
+			launch {
+				// init quick picks rank
+				_quickPicksState.update {
+					it.copy(sortedQuickPicks = quickPicksRepository.getRankedQuickPicks())
+				}
+			}
+			launch {
+				getTrendingRecipes()
 			}
 		}
 
@@ -89,6 +100,12 @@ class DiscoverViewModel @Inject constructor(
 		accept = { action ->
 			viewModelScope.launch { actionStateFlow.emit(action) }
 		}
+	}
+
+	private suspend fun getTrendingRecipes() {
+		// Get trending recipes
+		val trendingRecipes = recipeRepo.fetchTrendingRecipes()
+		_trendingState.update { it.copy(trendingRecipes = trendingRecipes) }
 	}
 
 	private fun searchRepo(queryString: DiscoverQuery) : Flow<PagingData<DiscoverItemUiState>> =
@@ -214,6 +231,14 @@ class DiscoverViewModel @Inject constructor(
 			)
 		}
 	}
+
+	fun viewItem(recipe: RecipeWithIngredients) {
+		recipeRepo.viewNonPersistedRecipe(recipe)
+	}
+
+	fun retryTrending() = viewModelScope.launch {
+		getTrendingRecipes()
+	}
 }
 
 sealed class UiAction {
@@ -242,6 +267,10 @@ data class DiscoverItemUiState(
 	val recipeListModel: RecipeListModel,
 	val recipeInteractions: RecipeInteraction,
 	val onSelect: () -> Unit
+)
+
+data class DiscoverTrendingState(
+	val trendingRecipes: List<RecipeWithIngredients> = emptyList()
 )
 
 // TODO Extract string resources
